@@ -3,74 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="欣与甜,欣与甜官网,欣与甜自助快递查询">
+    <meta name="description" content="欣与甜,欣与甜自助快递查询,请输入姓名或手机号码查询快递单号哦~">
     <title>欣与甜订单自助快递查询官网</title>
-    <meta name="description" content="欣与甜,欣与甜自助快递查询,请输入姓名或手机号码查询快递单号">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="./js/tailwind.3.4.17.js"></script>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="min-h-screen bg-gray-100">
+<body class="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-amber-100 selection:text-amber-900">
     <!-- Header -->
-    <header class="bg-gray-900 text-white py-4">
-        <div class="container mx-auto px-4 flex items-center">
-            <h1 class="text-xl font-bold">欣与甜</h1>
+    <header class="sticky top-0 z-40 w-full backdrop-blur flex-none transition-colors duration-500 lg:z-50 lg:border-b lg:border-slate-900/10 bg-white/80 dark:bg-slate-900/75 dark:border-slate-50/[0.06] border-b border-slate-900/10">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex h-16 items-center justify-between">
+                <div class="flex items-center gap-3 group cursor-pointer">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-200/50 group-hover:scale-105 transition-transform duration-200">
+                        <span class="text-white font-black text-xs">XT</span>
+                    </div>
+                    <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600">欣与甜</span>
+                </div>
+                
+                <div class="flex items-center gap-6">
+                    <!-- Navigation Links -->
+                    <nav class="hidden md:flex items-center gap-8 text-sm font-medium">
+                        <a href="tech.html" class="text-slate-600 hover:text-amber-600 transition-colors duration-200">技术栈</a>
+                        <a href="https://github.com/codeslips/e-commerce.git" target="_blank" rel="noopener noreferrer" class="text-slate-600 hover:text-amber-600 transition-colors duration-200 flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                            GitHub
+                        </a>
+                    </nav>
+
+                    <!-- QR Code -->
+                    <div class="hidden sm:block relative group">
+                        <button class="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-amber-600 transition-colors duration-200">
+                            <span>手机访问</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+                        </button>
+                        <!-- QR Code Popup -->
+                        <div class="qr-popup absolute right-0 top-full mt-4 bg-white p-4 rounded-2xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 transform group-hover:translate-y-0 translate-y-2 border border-slate-100">
+                            <div class="text-slate-400 text-[10px] uppercase tracking-wider font-bold mb-3 text-center">Scan to preview</div>
+                            <div class="bg-slate-50 p-2 rounded-xl">
+                                <img id="headerQrCode" class="w-28 h-28" alt="QR Code">
+                            </div>
+                            <div class="absolute -top-2 right-6 w-0 h-0 border-l-8 border-r-8 border-b-8 border-transparent border-b-white"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8">
-        <!-- Logo & Title -->
-        <div class="text-center mb-8">
-            <h2 class="text-2xl font-bold text-gray-800">欣与甜</h2>
-            <p class="text-gray-600 mt-2">订单自助查询</p>
-        </div>
+    <main class="flex-grow">
+        <!-- Hero Section -->
+        <section class="relative overflow-hidden pt-16 pb-20 lg:pt-24 lg:pb-28">
+            <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-amber-50/50 to-transparent -z-10"></div>
+            
+            <div class="container mx-auto px-4 relative">
+                <!-- Logo & Title -->
+                <div class="max-w-3xl mx-auto text-center mb-12">
+                    <div class="inline-flex items-center justify-center p-1.5 mb-6 rounded-2xl bg-amber-100/50 text-amber-700 text-sm font-bold tracking-wide uppercase">
+                        <span class="px-3 py-1 bg-white rounded-xl shadow-sm">Serendipity</span>
+                        <span class="px-3">官方自助查询</span>
+                    </div>
+                    <h1 class="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">
+                        让每一份甜，<br/>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600">都能准时送达。</span>
+                    </h1>
+                    <p class="text-lg text-slate-600 max-w-xl mx-auto">
+                        请输入您的姓名、手机号码或运单号，实时追踪包裹动态。
+                    </p>
+                </div>
 
-        <!-- Search Form -->
-        <div class="max-w-2xl mx-auto">
-            <form id="searchForm" class="flex flex-col sm:flex-row gap-2">
-                <input
-                    type="text"
-                    id="queryInput"
-                    placeholder="请输入运单号/收件人/收件人电话查快递单号"
-                    class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                >
-                <button
-                    type="submit"
-                    class="px-8 py-3 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition"
-                >
-                    查一下
-                </button>
-            </form>
+                <!-- Search Form -->
+                <div class="max-w-2xl mx-auto">
+                    <div class="bg-white p-2 rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-100">
+                        <form id="searchForm" class="flex flex-col sm:flex-row gap-2">
+                            <div class="flex-1 relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                </div>
+                                <input
+                                    type="text"
+                                    id="queryInput"
+                                    placeholder="姓名 / 手机号 / 运单号"
+                                    class="block w-full pl-11 pr-4 py-4 rounded-xl border-0 bg-slate-50 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-amber-500 transition-all duration-200"
+                                >
+                            </div>
+                            <button
+                                type="submit"
+                                class="px-8 py-4 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 active:scale-95 transition-all duration-200 shadow-lg shadow-slate-900/20"
+                            >
+                                立即查询
+                            </button>
+                        </form>
+                    </div>
 
-            <!-- Search History -->
-            <div id="searchHistory" class="mt-4 hidden">
-                <p class="text-gray-500 text-sm mb-2">历史记录 <span id="clearHistory" class="cursor-pointer text-red-500 float-right">清除</span></p>
-                <div id="historyList" class="flex flex-wrap gap-2"></div>
+                    <!-- Search History -->
+                    <div id="searchHistory" class="mt-8 hidden">
+                        <div class="flex items-center justify-between mb-3 px-1">
+                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">搜索历史</h3>
+                            <button id="clearHistory" class="text-xs font-semibold text-slate-400 hover:text-red-500 transition-colors cursor-pointer">
+                                清空历史
+                            </button>
+                        </div>
+                        <div id="historyList" class="flex flex-wrap gap-2"></div>
+                    </div>
+                </div>
             </div>
+        </section>
 
-            <!-- Results -->
-            <div id="results" class="mt-6"></div>
-
-            <!-- Error Message -->
-            <div id="errorMessage" class="mt-4 p-4 bg-red-100 text-red-700 rounded-lg hidden"></div>
-        </div>
+        <!-- Results Section -->
+        <section id="resultsSection" class="hidden pb-20">
+            <div class="container mx-auto px-4 max-w-2xl">
+                <div id="results" class="space-y-6"></div>
+                <div id="errorMessage" class="p-6 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-center font-medium hidden shadow-sm"></div>
+            </div>
+        </section>
 
         <!-- Product Categories -->
-        <section class="mt-12">
-            <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">产品分类</h3>
-            <div id="productCategories" class="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
-                <!-- Products will be loaded here -->
+        <section class="py-16 bg-slate-50/50 border-t border-slate-100">
+            <div class="container mx-auto px-4">
+                <div class="max-w-2xl mx-auto">
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="h-px flex-1 bg-slate-200"></div>
+                        <h2 class="text-sm font-bold text-slate-400 uppercase tracking-[0.2em]">快速直达</h2>
+                        <div class="h-px flex-1 bg-slate-200"></div>
+                    </div>
+                    <div id="productCategories" class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                        <!-- Products will be loaded here -->
+                    </div>
+                </div>
             </div>
         </section>
     </main>
 
     <!-- Footer -->
-    <footer class="fixed bottom-0 left-0 right-0 bg-gray-900 text-white py-3">
-        <div class="container mx-auto px-4 text-center text-sm">
-            一路同行，共同见证梦想的力量
+    <footer class="bg-white border-t border-slate-100 py-10">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col items-center justify-center gap-4">
+                <div class="flex items-center gap-2 grayscale opacity-50">
+                    <div class="w-6 h-6 rounded-lg bg-slate-900 flex items-center justify-center">
+                        <span class="text-white font-bold text-[8px]">XT</span>
+                    </div>
+                    <span class="text-sm font-bold text-slate-900">欣与甜</span>
+                </div>
+                <p class="text-slate-400 text-sm font-medium">一路同行，共同见证梦想的力量</p>
+                <div class="text-slate-300 text-[10px] mt-2">© 2025 XIN YU TIAN. All rights reserved.</div>
+            </div>
         </div>
     </footer>
 
     <script src="js/app.js"></script>
+    <script>
+        // Generate QR code for current URL
+        document.addEventListener('DOMContentLoaded', function() {
+            const qrImg = document.getElementById('headerQrCode');
+            if (qrImg) {
+                const currentUrl = encodeURIComponent(window.location.href);
+                qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=128x128&data=${currentUrl}`;
+            }
+        });
+    </script>
 </body>
 </html>
-

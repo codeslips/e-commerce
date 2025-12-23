@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>技术栈 - 欣与甜</title>
+    <script src="./js/tailwind.3.4.17.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .tech-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .tech-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.15);
+        }
+        .tech-icon {
+            font-size: 3rem;
+            line-height: 1;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #2196F3 0%, #1565C0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-100 flex flex-col">
+    <!-- Header -->
+    <header class="bg-gray-800 text-white py-3 shadow-md">
+        <div class="container mx-auto px-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="flex items-center gap-3 text-white no-underline">
+                    <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center overflow-hidden">
+                        <span class="text-amber-600 font-bold text-sm">欣与甜</span>
+                    </div>
+                    <span class="text-lg font-semibold">欣与甜</span>
+                </a>
+            </div>
+            <a href="index.html" class="text-sm text-gray-300 hover:text-white">← 返回首页</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient py-12">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-3xl font-bold text-white mb-4">技术栈</h1>
+            <p class="text-blue-100 max-w-xl mx-auto">
+                欣与甜订单自助查询系统采用现代化技术构建，提供快速、可靠的服务体验
+            </p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="flex-1 py-12">
+        <div class="container mx-auto px-4 max-w-4xl">
+            
+            <!-- Frontend Section -->
+            <div class="mb-12">
+                <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                    <span class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center text-white text-sm">🎨</span>
+                    前端技术
+                </h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- HTML5 -->
+                    <div class="tech-card bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-start gap-4">
+                            <div class="tech-icon text-orange-500">📄</div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg">HTML5</h3>
+                                <p class="text-gray-500 text-sm mt-1">语义化标签，结构清晰</p>
+                                <div class="mt-3 flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-orange-50 text-orange-600 text-xs rounded-full">语义化</span>
+                                    <span class="px-2 py-1 bg-orange-50 text-orange-600 text-xs rounded-full">SEO友好</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tailwind CSS -->
+                    <div class="tech-card bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-start gap-4">
+                            <div class="tech-icon text-cyan-500">🎯</div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg">Tailwind CSS</h3>
+                                <p class="text-gray-500 text-sm mt-1">实用优先的CSS框架</p>
+                                <div class="mt-3 flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-cyan-50 text-cyan-600 text-xs rounded-full">响应式</span>
+                                    <span class="px-2 py-1 bg-cyan-50 text-cyan-600 text-xs rounded-full">CDN加载</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vanilla JavaScript -->
+                    <div class="tech-card bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-start gap-4">
+                            <div class="tech-icon text-yellow-500">⚡</div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg">Vanilla JavaScript</h3>
+                                <p class="text-gray-500 text-sm mt-1">原生JavaScript，无框架依赖</p>
+                                <div class="mt-3 flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-yellow-50 text-yellow-700 text-xs rounded-full">轻量级</span>
+                                    <span class="px-2 py-1 bg-yellow-50 text-yellow-700 text-xs rounded-full">Fetch API</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LocalStorage -->
+                    <div class="tech-card bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-start gap-4">
+                            <div class="tech-icon text-purple-500">💾</div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg">LocalStorage</h3>
+                                <p class="text-gray-500 text-sm mt-1">本地存储搜索历史</p>
+                                <div class="mt-3 flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-purple-50 text-purple-600 text-xs rounded-full">持久化</span>
+                                    <span class="px-2 py-1 bg-purple-50 text-purple-600 text-xs rounded-full">快速访问</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Backend Section -->
+            <div class="mb-12">
+                <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                    <span class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center text-white text-sm">⚙️</span>
+                    后端技术
+                </h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- FastAPI -->
+                    <div class="tech-card bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-start gap-4">
+                            <div class="tech-icon text-green-500">🚀</div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg">FastAPI</h3>
+                                <p class="text-gray-500 text-sm mt-1">高性能Python Web框架</p>
+                                <div class="mt-3 flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-green-50 text-green-600 text-xs rounded-full">异步支持</span>
+                                    <span class="px-2 py-1 bg-green-50 text-green-600 text-xs rounded-full">自动文档</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Python -->
+                    <div class="tech-card bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-start gap-4">
+                            <div class="tech-icon text-blue-500">🐍</div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg">Python 3.9+</h3>
+                                <p class="text-gray-500 text-sm mt-1">现代Python版本</p>
+                                <div class="mt-3 flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-blue-50 text-blue-600 text-xs rounded-full">类型提示</span>
+                                    <span class="px-2 py-1 bg-blue-50 text-blue-600 text-xs rounded-full">Pydantic</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Uvicorn -->
+                    <div class="tech-card bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-start gap-4">
+                            <div class="tech-icon text-indigo-500">🔥</div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg">Uvicorn</h3>
+                                <p class="text-gray-500 text-sm mt-1">ASGI服务器</p>
+                                <div class="mt-3 flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-indigo-50 text-indigo-600 text-xs rounded-full">高并发</span>
+                                    <span class="px-2 py-1 bg-indigo-50 text-indigo-600 text-xs rounded-full">热重载</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- JSON -->
+                    <div class="tech-card bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-start gap-4">
+                            <div class="tech-icon text-gray-500">📦</div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg">JSON 数据存储</h3>
+                                <p class="text-gray-500 text-sm mt-1">轻量级本地数据文件</p>
+                                <div class="mt-3 flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">无需数据库</span>
+                                    <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">易于维护</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DevOps Section -->
+            <div class="mb-12">
+                <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                    <span class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center text-white text-sm">🐳</span>
+                    部署与运维
+                </h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Docker -->
+                    <div class="tech-card bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-start gap-4">
+                            <div class="tech-icon text-blue-600">🐳</div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg">Docker</h3>
+                                <p class="text-gray-500 text-sm mt-1">容器化部署</p>
+                                <div class="mt-3 flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-blue-50 text-blue-600 text-xs rounded-full">Docker Compose</span>
+                                    <span class="px-2 py-1 bg-blue-50 text-blue-600 text-xs rounded-full">多容器</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Nginx -->
+                    <div class="tech-card bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-start gap-4">
+                            <div class="tech-icon text-green-600">🌐</div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg">Nginx</h3>
+                                <p class="text-gray-500 text-sm mt-1">静态文件服务与反向代理</p>
+                                <div class="mt-3 flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-green-50 text-green-600 text-xs rounded-full">高性能</span>
+                                    <span class="px-2 py-1 bg-green-50 text-green-600 text-xs rounded-full">负载均衡</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Architecture Diagram -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                    <span class="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center text-white text-sm">📐</span>
+                    架构概览
+                </h2>
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <div class="flex flex-col items-center gap-4">
+                        <!-- User -->
+                        <div class="flex items-center gap-2 bg-blue-100 px-4 py-2 rounded-lg">
+                            <span>👤</span>
+                            <span class="font-medium text-blue-800">用户浏览器</span>
+                        </div>
+                        
+                        <div class="text-gray-400">↓</div>
+                        
+                        <!-- Frontend -->
+                        <div class="flex items-center gap-2 bg-cyan-100 px-4 py-2 rounded-lg">
+                            <span>🎨</span>
+                            <span class="font-medium text-cyan-800">前端 (Nginx / Port 5500)</span>
+                        </div>
+                        
+                        <div class="text-gray-400">↓ HTTP API</div>
+                        
+                        <!-- Backend -->
+                        <div class="flex items-center gap-2 bg-green-100 px-4 py-2 rounded-lg">
+                            <span>⚙️</span>
+                            <span class="font-medium text-green-800">后端 (FastAPI / Port 9111)</span>
+                        </div>
+                        
+                        <div class="text-gray-400">↓</div>
+                        
+                        <!-- Data -->
+                        <div class="flex items-center gap-2 bg-amber-100 px-4 py-2 rounded-lg">
+                            <span>📦</span>
+                            <span class="font-medium text-amber-800">JSON 数据文件</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-4 mt-auto">
+        <div class="container mx-auto px-4 text-center text-sm">
+            一路同行，共同见证梦想的力量
+        </div>
+    </footer>
+</body>
+</html>
+
