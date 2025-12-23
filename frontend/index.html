@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>欣与甜订单自助快递查询官网</title>
+    <meta name="description" content="欣与甜,欣与甜自助快递查询,请输入姓名或手机号码查询快递单号">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="min-h-screen bg-gray-100">
+    <!-- Header -->
+    <header class="bg-gray-900 text-white py-4">
+        <div class="container mx-auto px-4 flex items-center">
+            <h1 class="text-xl font-bold">欣与甜</h1>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Logo & Title -->
+        <div class="text-center mb-8">
+            <h2 class="text-2xl font-bold text-gray-800">欣与甜</h2>
+            <p class="text-gray-600 mt-2">订单自助查询</p>
+        </div>
+
+        <!-- Search Form -->
+        <div class="max-w-2xl mx-auto">
+            <form id="searchForm" class="flex flex-col sm:flex-row gap-2">
+                <input
+                    type="text"
+                    id="queryInput"
+                    placeholder="请输入运单号/收件人/收件人电话查快递单号"
+                    class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                >
+                <button
+                    type="submit"
+                    class="px-8 py-3 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition"
+                >
+                    查一下
+                </button>
+            </form>
+
+            <!-- Search History -->
+            <div id="searchHistory" class="mt-4 hidden">
+                <p class="text-gray-500 text-sm mb-2">历史记录 <span id="clearHistory" class="cursor-pointer text-red-500 float-right">清除</span></p>
+                <div id="historyList" class="flex flex-wrap gap-2"></div>
+            </div>
+
+            <!-- Results -->
+            <div id="results" class="mt-6"></div>
+
+            <!-- Error Message -->
+            <div id="errorMessage" class="mt-4 p-4 bg-red-100 text-red-700 rounded-lg hidden"></div>
+        </div>
+
+        <!-- Product Categories -->
+        <section class="mt-12">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">产品分类</h3>
+            <div id="productCategories" class="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
+                <!-- Products will be loaded here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="fixed bottom-0 left-0 right-0 bg-gray-900 text-white py-3">
+        <div class="container mx-auto px-4 text-center text-sm">
+            一路同行，共同见证梦想的力量
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
+
