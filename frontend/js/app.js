@@ -1,9 +1,7 @@
 // 欣与甜 E-Shop - Frontend JavaScript
 
-// API Base URL - adjust based on environment
-const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://localhost:9111'
-    : '';
+// API Base URL - always use relative path (proxied through nginx)
+const API_BASE = '';
 
 // Storage key for search history
 const STORAGE_KEY = window.location.host + '_search_log';
