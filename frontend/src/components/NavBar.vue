@@ -31,254 +31,181 @@ function closeMobileMenu() {
 </script>
 
 <template>
-  <nav class="navbar">
-    <div class="navbar-container">
-      <router-link to="/" class="navbar-brand" @click="closeMobileMenu">
-        <span class="brand-text">欣与甜</span>
-        <span class="brand-sub">订货平台</span>
-      </router-link>
-      
-      <button class="mobile-toggle" @click="toggleMobileMenu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-      
-      <div class="navbar-menu" :class="{ open: mobileMenuOpen }">
-        <div class="navbar-start">
-          <router-link to="/products" class="nav-link" @click="closeMobileMenu">
+  <header class="sticky top-0 z-50 w-full backdrop-blur flex-none transition-colors duration-500 bg-white/80 border-b border-slate-900/10">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex h-16 items-center justify-between">
+        <!-- Logo -->
+        <router-link to="/" class="flex items-center gap-3 group cursor-pointer" @click="closeMobileMenu">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-200/50 group-hover:scale-105 transition-transform duration-200">
+            <span class="text-white font-black text-xs">XT</span>
+          </div>
+          <div class="flex items-baseline gap-1.5">
+            <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600">欣与甜</span>
+            <span class="text-xs text-slate-400 hidden sm:inline">订货平台</span>
+          </div>
+        </router-link>
+
+        <!-- Mobile toggle -->
+        <button 
+          class="md:hidden flex flex-col gap-1 p-2 -mr-2"
+          @click="toggleMobileMenu"
+        >
+          <span class="w-5 h-0.5 bg-slate-700 rounded-full transition-all" :class="{ 'rotate-45 translate-y-1.5': mobileMenuOpen }"></span>
+          <span class="w-5 h-0.5 bg-slate-700 rounded-full transition-all" :class="{ 'opacity-0': mobileMenuOpen }"></span>
+          <span class="w-5 h-0.5 bg-slate-700 rounded-full transition-all" :class="{ '-rotate-45 -translate-y-1.5': mobileMenuOpen }"></span>
+        </button>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center gap-8 text-sm font-medium">
+          <router-link 
+            to="/products" 
+            class="text-slate-600 hover:text-amber-600 transition-colors duration-200"
+          >
             产品目录
           </router-link>
           
           <template v-if="isLoggedIn && isDealer">
-            <router-link to="/orders" class="nav-link" @click="closeMobileMenu">
+            <router-link 
+              to="/orders" 
+              class="text-slate-600 hover:text-amber-600 transition-colors duration-200"
+            >
               我的订单
             </router-link>
           </template>
           
           <template v-if="isAdmin">
-            <router-link to="/admin" class="nav-link admin-link" @click="closeMobileMenu">
+            <router-link 
+              to="/admin" 
+              class="text-amber-600 hover:text-amber-700 transition-colors duration-200 font-semibold"
+            >
               管理后台
             </router-link>
           </template>
-        </div>
-        
-        <div class="navbar-end">
+        </nav>
+
+        <!-- Desktop Right Actions -->
+        <div class="hidden md:flex items-center gap-4">
           <template v-if="isLoggedIn && isDealer">
-            <router-link to="/cart" class="nav-link cart-link" @click="closeMobileMenu">
-              <span class="cart-icon">🛒</span>
-              <span v-if="cartCount > 0" class="cart-badge">{{ cartCount }}</span>
+            <router-link 
+              to="/cart" 
+              class="relative p-2 text-slate-600 hover:text-amber-600 transition-colors duration-200"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              <span 
+                v-if="cartCount > 0" 
+                class="absolute -top-0.5 -right-0.5 bg-orange-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center"
+              >
+                {{ cartCount }}
+              </span>
             </router-link>
           </template>
-          
+
           <template v-if="isLoggedIn">
-            <router-link to="/profile" class="nav-link user-link" @click="closeMobileMenu">
-              <span class="user-icon">👤</span>
-              <span class="username">{{ username }}</span>
+            <router-link 
+              to="/profile" 
+              class="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-amber-600 transition-colors duration-200"
+            >
+              <div class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center">
+                <svg class="w-4 h-4 text-slate-500" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+              </div>
+              <span class="max-w-[80px] truncate">{{ username }}</span>
             </router-link>
-            <button class="logout-btn" @click="handleLogout">
+            <button 
+              @click="handleLogout"
+              class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-all duration-200"
+            >
               退出
             </button>
           </template>
-          
+
           <template v-else>
-            <router-link to="/login" class="nav-link login-link" @click="closeMobileMenu">
+            <router-link 
+              to="/login" 
+              class="px-5 py-2.5 text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-xl shadow-lg shadow-slate-900/10 transition-all duration-200"
+            >
               登录
             </router-link>
           </template>
         </div>
       </div>
     </div>
-  </nav>
+
+    <!-- Mobile Menu -->
+    <div 
+      v-show="mobileMenuOpen"
+      class="md:hidden border-t border-slate-100 bg-white"
+    >
+      <div class="container mx-auto px-4 py-4 space-y-2">
+        <router-link 
+          to="/products" 
+          class="block px-4 py-3 text-slate-600 hover:text-amber-600 hover:bg-slate-50 rounded-xl transition-colors duration-200"
+          @click="closeMobileMenu"
+        >
+          产品目录
+        </router-link>
+
+        <template v-if="isLoggedIn && isDealer">
+          <router-link 
+            to="/orders" 
+            class="block px-4 py-3 text-slate-600 hover:text-amber-600 hover:bg-slate-50 rounded-xl transition-colors duration-200"
+            @click="closeMobileMenu"
+          >
+            我的订单
+          </router-link>
+          <router-link 
+            to="/cart" 
+            class="flex items-center gap-2 px-4 py-3 text-slate-600 hover:text-amber-600 hover:bg-slate-50 rounded-xl transition-colors duration-200"
+            @click="closeMobileMenu"
+          >
+            <span>购物车</span>
+            <span v-if="cartCount > 0" class="bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+              {{ cartCount }}
+            </span>
+          </router-link>
+        </template>
+
+        <template v-if="isAdmin">
+          <router-link 
+            to="/admin" 
+            class="block px-4 py-3 text-amber-600 font-semibold hover:bg-amber-50 rounded-xl transition-colors duration-200"
+            @click="closeMobileMenu"
+          >
+            管理后台
+          </router-link>
+        </template>
+
+        <div class="pt-2 border-t border-slate-100">
+          <template v-if="isLoggedIn">
+            <router-link 
+              to="/profile" 
+              class="block px-4 py-3 text-slate-600 hover:text-amber-600 hover:bg-slate-50 rounded-xl transition-colors duration-200"
+              @click="closeMobileMenu"
+            >
+              个人中心 ({{ username }})
+            </router-link>
+            <button 
+              @click="handleLogout"
+              class="w-full text-left px-4 py-3 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors duration-200"
+            >
+              退出登录
+            </button>
+          </template>
+
+          <template v-else>
+            <router-link 
+              to="/login" 
+              class="block px-4 py-3 text-center font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition-colors duration-200"
+              @click="closeMobileMenu"
+            >
+              登录
+            </router-link>
+          </template>
+        </div>
+      </div>
+    </div>
+  </header>
 </template>
-
-<style scoped>
-.navbar {
-  background: #1a1a2e;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.navbar-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 60px;
-}
-
-.navbar-brand {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  text-decoration: none;
-}
-
-.brand-text {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #fbbf24;
-}
-
-.brand-sub {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.mobile-toggle {
-  display: none;
-  flex-direction: column;
-  gap: 4px;
-  padding: 8px;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.mobile-toggle span {
-  width: 20px;
-  height: 2px;
-  background: white;
-  border-radius: 1px;
-}
-
-.navbar-menu {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex: 1;
-  justify-content: space-between;
-  margin-left: 2rem;
-}
-
-.navbar-start,
-.navbar-end {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.nav-link {
-  color: rgba(255, 255, 255, 0.8);
-  text-decoration: none;
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  transition: all 0.2s;
-}
-
-.nav-link:hover,
-.nav-link.router-link-active {
-  color: white;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.admin-link {
-  color: #fbbf24;
-}
-
-.cart-link {
-  position: relative;
-  font-size: 1.25rem;
-}
-
-.cart-badge {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background: #dc2626;
-  color: white;
-  font-size: 0.65rem;
-  padding: 0.15rem 0.4rem;
-  border-radius: 10px;
-  font-weight: 600;
-}
-
-.user-link {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.user-icon {
-  font-size: 1.1rem;
-}
-
-.username {
-  max-width: 100px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.login-link {
-  background: rgba(251, 191, 36, 0.2);
-  color: #fbbf24;
-}
-
-.login-link:hover {
-  background: rgba(251, 191, 36, 0.3);
-}
-
-.logout-btn {
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.8);
-  border: none;
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.logout-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-}
-
-@media (max-width: 768px) {
-  .mobile-toggle {
-    display: flex;
-  }
-  
-  .navbar-menu {
-    position: fixed;
-    top: 60px;
-    left: 0;
-    right: 0;
-    background: #1a1a2e;
-    flex-direction: column;
-    padding: 1rem;
-    gap: 0.5rem;
-    margin-left: 0;
-    display: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  .navbar-menu.open {
-    display: flex;
-  }
-  
-  .navbar-start,
-  .navbar-end {
-    flex-direction: column;
-    width: 100%;
-    gap: 0.25rem;
-  }
-  
-  .nav-link {
-    width: 100%;
-    padding: 0.75rem;
-  }
-  
-  .logout-btn {
-    width: 100%;
-    margin-top: 0.5rem;
-  }
-}
-</style>
-

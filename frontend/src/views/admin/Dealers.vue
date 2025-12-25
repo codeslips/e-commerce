@@ -24,10 +24,10 @@ const statusLabels: Record<string, string> = {
   suspended: '已停用',
 }
 
-const statusColors: Record<string, string> = {
-  pending: '#f59e0b',
-  approved: '#10b981',
-  suspended: '#ef4444',
+const statusColors: Record<string, { bg: string, text: string }> = {
+  pending: { bg: 'bg-amber-100', text: 'text-amber-700' },
+  approved: { bg: 'bg-emerald-100', text: 'text-emerald-700' },
+  suspended: { bg: 'bg-red-100', text: 'text-red-700' },
 }
 
 // Modal for creating dealer
@@ -137,532 +137,210 @@ onMounted(() => fetchDealers())
 </script>
 
 <template>
-  <div class="admin-dealers">
-    <div class="page-header">
-      <div>
-        <h1>经销商管理</h1>
-        <p>管理所有经销商账户</p>
-      </div>
-      <button class="add-btn" @click="openCreateModal">
-        + 添加经销商
-      </button>
-    </div>
-    
-    <div class="toolbar">
-      <div class="search-box">
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="搜索公司名称、联系人..."
-          @keyup.enter="handleFilterChange"
-        />
-        <button @click="handleFilterChange">搜索</button>
+  <div class="py-8">
+    <div class="container mx-auto px-4 max-w-6xl">
+      <!-- Page Header -->
+      <div class="flex justify-between items-start mb-8">
+        <div>
+          <h1 class="text-3xl font-bold text-slate-900 mb-2">经销商管理</h1>
+          <p class="text-slate-500">管理所有经销商账户</p>
+        </div>
+        <button 
+          class="px-6 py-3 bg-slate-900 text-white font-semibold rounded-xl hover:bg-slate-800 transition-all duration-200 shadow-lg shadow-slate-900/10"
+          @click="openCreateModal"
+        >
+          + 添加经销商
+        </button>
       </div>
       
-      <select v-model="statusFilter" @change="handleFilterChange">
-        <option v-for="opt in statusOptions" :key="opt.value" :value="opt.value">
-          {{ opt.label }}
-        </option>
-      </select>
-    </div>
-    
-    <div v-if="loading" class="loading">加载中...</div>
-    <div v-else-if="error" class="error">{{ error }}</div>
-    
-    <div v-else class="dealers-table">
-      <table>
-        <thead>
-          <tr>
-            <th>公司名称</th>
-            <th>联系人</th>
-            <th>联系电话</th>
-            <th>账号</th>
-            <th>状态</th>
-            <th>注册时间</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="dealer in dealers" :key="dealer.id">
-            <td>{{ dealer.company_name }}</td>
-            <td>{{ dealer.contact_name }}</td>
-            <td>{{ dealer.phone }}</td>
-            <td>{{ dealer.user.username }}</td>
-            <td>
-              <span
-                class="status-badge"
-                :style="{ backgroundColor: statusColors[dealer.status] + '20', color: statusColors[dealer.status] }"
-              >
-                {{ statusLabels[dealer.status] }}
-              </span>
-            </td>
-            <td class="date">{{ formatDate(dealer.created_at) }}</td>
-            <td>
-              <div class="actions">
-                <button
-                  v-if="dealer.status === 'pending'"
-                  class="approve-btn"
-                  @click="updateStatus(dealer, 'approved')"
-                >
-                  通过
-                </button>
-                <button
-                  v-if="dealer.status === 'approved'"
-                  class="suspend-btn"
-                  @click="updateStatus(dealer, 'suspended')"
-                >
-                  停用
-                </button>
-                <button
-                  v-if="dealer.status === 'suspended'"
-                  class="activate-btn"
-                  @click="updateStatus(dealer, 'approved')"
-                >
-                  激活
-                </button>
-                <button class="delete-btn" @click="deleteDealer(dealer)">
-                  删除
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    
-    <div v-if="totalPages > 1" class="pagination">
-      <button
-        :disabled="currentPage === 1"
-        @click="fetchDealers(currentPage - 1)"
-      >
-        上一页
-      </button>
-      <span>第 {{ currentPage }} / {{ totalPages }} 页</span>
-      <button
-        :disabled="currentPage === totalPages"
-        @click="fetchDealers(currentPage + 1)"
-      >
-        下一页
-      </button>
-    </div>
-    
-    <!-- Create Dealer Modal -->
-    <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
-      <div class="modal">
-        <div class="modal-header">
-          <h2>添加经销商</h2>
-          <button class="close-btn" @click="closeModal">×</button>
+      <!-- Toolbar -->
+      <div class="flex flex-wrap gap-4 mb-6">
+        <div class="flex gap-3">
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="搜索公司名称、联系人..."
+            class="px-4 py-3 border-2 border-slate-200 rounded-xl bg-white text-slate-900 placeholder-slate-400 focus:border-amber-500 focus:ring-0 transition-all duration-200 min-w-[250px]"
+            @keyup.enter="handleFilterChange"
+          />
+          <button 
+            class="px-6 py-3 bg-slate-900 text-white font-medium rounded-xl hover:bg-slate-800 transition-all duration-200"
+            @click="handleFilterChange"
+          >
+            搜索
+          </button>
         </div>
         
-        <form @submit.prevent="createDealer" class="modal-form">
-          <h3>账户信息</h3>
-          <div class="form-row">
-            <div class="form-group">
-              <label>用户名 *</label>
-              <input v-model="formData.username" required />
-            </div>
-            <div class="form-group">
-              <label>邮箱 *</label>
-              <input v-model="formData.email" type="email" required />
-            </div>
+        <select 
+          v-model="statusFilter" 
+          @change="handleFilterChange"
+          class="px-4 py-3 border-2 border-slate-200 rounded-xl bg-white text-slate-700 cursor-pointer focus:border-amber-500 focus:ring-0 transition-all duration-200"
+        >
+          <option v-for="opt in statusOptions" :key="opt.value" :value="opt.value">
+            {{ opt.label }}
+          </option>
+        </select>
+      </div>
+      
+      <!-- Loading / Error -->
+      <div v-if="loading" class="text-center py-16 text-slate-500">加载中...</div>
+      <div v-else-if="error" class="text-center py-16 text-red-500">{{ error }}</div>
+      
+      <!-- Dealers Table -->
+      <div v-else class="bg-white rounded-2xl shadow-lg shadow-slate-100/50 border border-slate-100 overflow-hidden overflow-x-auto">
+        <table class="w-full min-w-[800px]">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-100">
+              <th class="px-6 py-4 text-left text-sm font-semibold text-slate-600 whitespace-nowrap">公司名称</th>
+              <th class="px-6 py-4 text-left text-sm font-semibold text-slate-600 whitespace-nowrap">联系人</th>
+              <th class="px-6 py-4 text-left text-sm font-semibold text-slate-600 whitespace-nowrap">联系电话</th>
+              <th class="px-6 py-4 text-left text-sm font-semibold text-slate-600 whitespace-nowrap">账号</th>
+              <th class="px-6 py-4 text-left text-sm font-semibold text-slate-600 whitespace-nowrap">状态</th>
+              <th class="px-6 py-4 text-left text-sm font-semibold text-slate-600 whitespace-nowrap">注册时间</th>
+              <th class="px-6 py-4 text-left text-sm font-semibold text-slate-600 whitespace-nowrap">操作</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr v-for="dealer in dealers" :key="dealer.id" class="hover:bg-slate-50/50">
+              <td class="px-6 py-4 font-medium text-slate-900">{{ dealer.company_name }}</td>
+              <td class="px-6 py-4 text-slate-600">{{ dealer.contact_name }}</td>
+              <td class="px-6 py-4 text-slate-600">{{ dealer.phone }}</td>
+              <td class="px-6 py-4 text-slate-600">{{ dealer.user.username }}</td>
+              <td class="px-6 py-4">
+                <span 
+                  class="px-3 py-1 rounded-full text-xs font-semibold"
+                  :class="[statusColors[dealer.status]?.bg, statusColors[dealer.status]?.text]"
+                >
+                  {{ statusLabels[dealer.status] }}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-slate-400 text-sm">{{ formatDate(dealer.created_at) }}</td>
+              <td class="px-6 py-4">
+                <div class="flex gap-2 flex-wrap">
+                  <button
+                    v-if="dealer.status === 'pending'"
+                    class="px-3 py-1.5 text-sm font-medium text-emerald-600 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors duration-200 whitespace-nowrap"
+                    @click="updateStatus(dealer, 'approved')"
+                  >
+                    通过
+                  </button>
+                  <button
+                    v-if="dealer.status === 'approved'"
+                    class="px-3 py-1.5 text-sm font-medium text-amber-600 bg-amber-50 rounded-lg hover:bg-amber-100 transition-colors duration-200 whitespace-nowrap"
+                    @click="updateStatus(dealer, 'suspended')"
+                  >
+                    停用
+                  </button>
+                  <button
+                    v-if="dealer.status === 'suspended'"
+                    class="px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors duration-200 whitespace-nowrap"
+                    @click="updateStatus(dealer, 'approved')"
+                  >
+                    激活
+                  </button>
+                  <button 
+                    class="px-3 py-1.5 text-sm font-medium text-red-500 border border-red-200 rounded-lg hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-200 whitespace-nowrap"
+                    @click="deleteDealer(dealer)"
+                  >
+                    删除
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Pagination -->
+      <div v-if="totalPages > 1" class="flex justify-center items-center gap-4 mt-8">
+        <button
+          :disabled="currentPage === 1"
+          class="px-5 py-2.5 border-2 border-slate-200 rounded-xl bg-white text-slate-600 font-medium transition-all duration-200 hover:border-amber-500 hover:text-amber-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          @click="fetchDealers(currentPage - 1)"
+        >
+          上一页
+        </button>
+        <span class="text-slate-500 text-sm">第 {{ currentPage }} / {{ totalPages }} 页</span>
+        <button
+          :disabled="currentPage === totalPages"
+          class="px-5 py-2.5 border-2 border-slate-200 rounded-xl bg-white text-slate-600 font-medium transition-all duration-200 hover:border-amber-500 hover:text-amber-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          @click="fetchDealers(currentPage + 1)"
+        >
+          下一页
+        </button>
+      </div>
+      
+      <!-- Create Dealer Modal -->
+      <div v-if="showModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" @click.self="closeModal">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+          <!-- Modal Header -->
+          <div class="flex justify-between items-center px-6 py-5 border-b border-slate-100">
+            <h2 class="text-xl font-bold text-slate-900">添加经销商</h2>
+            <button class="text-slate-400 hover:text-slate-600 text-2xl" @click="closeModal">×</button>
           </div>
           
-          <div class="form-row">
-            <div class="form-group">
-              <label>密码 *</label>
-              <input v-model="formData.password" type="password" required />
+          <!-- Modal Form -->
+          <form @submit.prevent="createDealer" class="p-6">
+            <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wide mb-4">账户信息</h3>
+            <div class="grid grid-cols-2 gap-4 mb-6">
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">用户名 *</label>
+                <input v-model="formData.username" required class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-0 transition-all duration-200" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">邮箱 *</label>
+                <input v-model="formData.email" type="email" required class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-0 transition-all duration-200" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">密码 *</label>
+                <input v-model="formData.password" type="password" required class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-0 transition-all duration-200" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">状态</label>
+                <select v-model="formData.status" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-0 transition-all duration-200">
+                  <option value="pending">待审核</option>
+                  <option value="approved">已通过</option>
+                </select>
+              </div>
             </div>
-            <div class="form-group">
-              <label>状态</label>
-              <select v-model="formData.status">
-                <option value="pending">待审核</option>
-                <option value="approved">已通过</option>
-              </select>
+            
+            <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wide mb-4">企业信息</h3>
+            <div class="space-y-4 mb-6">
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-slate-700 mb-2">公司名称 *</label>
+                  <input v-model="formData.company_name" required class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-0 transition-all duration-200" />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-slate-700 mb-2">联系人 *</label>
+                  <input v-model="formData.contact_name" required class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-0 transition-all duration-200" />
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">联系电话 *</label>
+                <input v-model="formData.phone" required class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-0 transition-all duration-200" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">地址</label>
+                <textarea v-model="formData.address" rows="2" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:ring-0 transition-all duration-200 resize-none"></textarea>
+              </div>
             </div>
-          </div>
-          
-          <h3>企业信息</h3>
-          <div class="form-row">
-            <div class="form-group">
-              <label>公司名称 *</label>
-              <input v-model="formData.company_name" required />
+            
+            <div v-if="modalError" class="p-4 mb-4 bg-red-50 border border-red-100 text-red-600 rounded-xl text-sm font-medium">
+              {{ modalError }}
             </div>
-            <div class="form-group">
-              <label>联系人 *</label>
-              <input v-model="formData.contact_name" required />
+            
+            <div class="flex gap-4">
+              <button type="button" class="flex-1 py-3 bg-slate-100 text-slate-600 font-semibold rounded-xl hover:bg-slate-200 transition-all duration-200" @click="closeModal">
+                取消
+              </button>
+              <button type="submit" class="flex-1 py-3 bg-slate-900 text-white font-semibold rounded-xl hover:bg-slate-800 transition-all duration-200 disabled:opacity-60" :disabled="saving">
+                {{ saving ? '创建中...' : '创建' }}
+              </button>
             </div>
-          </div>
-          
-          <div class="form-row">
-            <div class="form-group">
-              <label>联系电话 *</label>
-              <input v-model="formData.phone" required />
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <label>地址</label>
-            <textarea v-model="formData.address" rows="2"></textarea>
-          </div>
-          
-          <div v-if="modalError" class="error-message">{{ modalError }}</div>
-          
-          <div class="modal-actions">
-            <button type="button" class="cancel-btn" @click="closeModal">取消</button>
-            <button type="submit" class="save-btn" :disabled="saving">
-              {{ saving ? '创建中...' : '创建' }}
-            </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   </div>
 </template>
-
-<style scoped>
-.admin-dealers {
-  padding: 1rem 0;
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 1.5rem;
-}
-
-.page-header h1 {
-  font-size: 1.75rem;
-  color: #1a1a2e;
-  margin-bottom: 0.25rem;
-}
-
-.page-header p {
-  color: #64748b;
-}
-
-.add-btn {
-  padding: 0.75rem 1.5rem;
-  background: #0f3460;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.add-btn:hover {
-  background: #1a1a2e;
-}
-
-.toolbar {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.search-box {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.search-box input {
-  padding: 0.625rem 1rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  min-width: 250px;
-}
-
-.search-box input:focus {
-  outline: none;
-  border-color: #0f3460;
-}
-
-.search-box button {
-  padding: 0.625rem 1rem;
-  background: #0f3460;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.toolbar select {
-  padding: 0.625rem 1rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.loading, .error {
-  text-align: center;
-  padding: 2rem;
-}
-
-.error {
-  color: #dc2626;
-}
-
-.dealers-table {
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 800px;
-}
-
-th, td {
-  padding: 1rem;
-  text-align: left;
-  border-bottom: 1px solid #f3f4f6;
-}
-
-th {
-  background: #f8fafc;
-  font-weight: 600;
-  color: #374151;
-  font-size: 0.875rem;
-  white-space: nowrap;
-}
-
-.date {
-  color: #64748b;
-  font-size: 0.875rem;
-}
-
-.status-badge {
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-
-.actions {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.approve-btn, .suspend-btn, .activate-btn, .delete-btn {
-  padding: 0.375rem 0.75rem;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.approve-btn {
-  background: #dcfce7;
-  color: #16a34a;
-  border: none;
-}
-
-.approve-btn:hover {
-  background: #bbf7d0;
-}
-
-.activate-btn {
-  background: #dbeafe;
-  color: #2563eb;
-  border: none;
-}
-
-.activate-btn:hover {
-  background: #bfdbfe;
-}
-
-.suspend-btn {
-  background: #fef3c7;
-  color: #d97706;
-  border: none;
-}
-
-.suspend-btn:hover {
-  background: #fde68a;
-}
-
-.delete-btn {
-  background: none;
-  border: 1px solid #dc2626;
-  color: #dc2626;
-}
-
-.delete-btn:hover {
-  background: #dc2626;
-  color: white;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
-
-.pagination button {
-  padding: 0.5rem 1rem;
-  border: 2px solid #0f3460;
-  border-radius: 8px;
-  background: white;
-  color: #0f3460;
-  cursor: pointer;
-}
-
-.pagination button:hover:not(:disabled) {
-  background: #0f3460;
-  color: white;
-}
-
-.pagination button:disabled {
-  border-color: #e5e7eb;
-  color: #9ca3af;
-  cursor: not-allowed;
-}
-
-/* Modal */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.modal {
-  background: white;
-  border-radius: 12px;
-  width: 100%;
-  max-width: 550px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.modal-header h2 {
-  font-size: 1.25rem;
-  color: #1a1a2e;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  color: #64748b;
-  cursor: pointer;
-}
-
-.modal-form {
-  padding: 1.5rem;
-}
-
-.modal-form h3 {
-  font-size: 0.95rem;
-  color: #64748b;
-  margin-bottom: 1rem;
-  margin-top: 1rem;
-}
-
-.modal-form h3:first-of-type {
-  margin-top: 0;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
-.form-group {
-  margin-bottom: 1rem;
-}
-
-.form-group label {
-  display: block;
-  font-size: 0.875rem;
-  color: #374151;
-  margin-bottom: 0.5rem;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: 0.625rem 0.75rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 0.95rem;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: #0f3460;
-}
-
-.error-message {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #dc2626;
-  padding: 0.75rem;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  margin-bottom: 1rem;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.modal-actions button {
-  flex: 1;
-  padding: 0.75rem;
-  border-radius: 8px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.cancel-btn {
-  background: #f3f4f6;
-  color: #374151;
-  border: none;
-}
-
-.save-btn {
-  background: #0f3460;
-  color: white;
-  border: none;
-}
-
-.save-btn:hover:not(:disabled) {
-  background: #1a1a2e;
-}
-
-.save-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-</style>
-

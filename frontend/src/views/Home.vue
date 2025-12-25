@@ -11,204 +11,133 @@ const companyName = computed(() => authStore.user?.dealer?.company_name)
 </script>
 
 <template>
-  <div class="home-page">
-    <div class="hero-section">
-      <div class="hero-content">
-        <h1>欢迎来到<span class="highlight">欣与甜</span></h1>
-        <p class="subtitle">经销商订货平台</p>
-        
-        <div v-if="isLoggedIn" class="welcome-message">
-          <p v-if="isAdmin">您好，管理员 <strong>{{ username }}</strong></p>
-          <p v-else-if="companyName">您好，<strong>{{ companyName }}</strong></p>
-          <p v-else>您好，<strong>{{ username }}</strong></p>
+  <div class="min-h-screen">
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden pt-16 pb-20 lg:pt-24 lg:pb-28">
+      <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-amber-50/50 to-transparent -z-10"></div>
+      
+      <div class="container mx-auto px-4 relative">
+        <!-- Logo & Title -->
+        <div class="max-w-3xl mx-auto text-center mb-12">
+          <div class="inline-flex items-center justify-center p-1.5 mb-6 rounded-2xl bg-amber-100/50 text-amber-700 text-sm font-bold tracking-wide uppercase">
+            <span class="px-3 py-1 bg-white rounded-xl shadow-sm">Serendipity</span>
+            <span class="px-3">经销商订货平台</span>
+          </div>
+          <h1 class="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">
+            欢迎来到<span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600">欣与甜</span>
+          </h1>
+          <p class="text-lg text-slate-600 max-w-xl mx-auto">
+            优质食品，专业配送，为您的事业保驾护航。
+          </p>
+          
+          <div v-if="isLoggedIn" class="mt-8 inline-flex items-center gap-3 px-6 py-4 bg-white/80 backdrop-blur rounded-2xl shadow-lg shadow-slate-200/60 border border-slate-100">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+              </svg>
+            </div>
+            <div class="text-left">
+              <p v-if="isAdmin" class="text-sm text-slate-500">您好，管理员</p>
+              <p v-else class="text-sm text-slate-500">欢迎回来</p>
+              <p class="font-semibold text-slate-900">{{ companyName || username }}</p>
+            </div>
+          </div>
         </div>
-        
-        <div class="hero-actions">
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-wrap justify-center gap-4 mt-8">
           <template v-if="!isLoggedIn">
-            <router-link to="/login" class="btn btn-primary">
+            <router-link 
+              to="/login" 
+              class="px-8 py-4 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 active:scale-95 transition-all duration-200 shadow-lg shadow-slate-900/20"
+            >
               登录
             </router-link>
-            <router-link to="/products" class="btn btn-secondary">
+            <router-link 
+              to="/products" 
+              class="px-8 py-4 bg-white text-slate-700 font-bold rounded-xl border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all duration-200"
+            >
               浏览产品
             </router-link>
           </template>
           <template v-else-if="isAdmin">
-            <router-link to="/admin" class="btn btn-primary">
+            <router-link 
+              to="/admin" 
+              class="px-8 py-4 bg-gradient-to-r from-amber-400 to-orange-500 text-slate-900 font-bold rounded-xl hover:from-amber-500 hover:to-orange-600 active:scale-95 transition-all duration-200 shadow-lg shadow-orange-200/50"
+            >
               进入管理后台
             </router-link>
-            <router-link to="/products" class="btn btn-secondary">
+            <router-link 
+              to="/products" 
+              class="px-8 py-4 bg-white text-slate-700 font-bold rounded-xl border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all duration-200"
+            >
               浏览产品
             </router-link>
           </template>
           <template v-else>
-            <router-link to="/products" class="btn btn-primary">
+            <router-link 
+              to="/products" 
+              class="px-8 py-4 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 active:scale-95 transition-all duration-200 shadow-lg shadow-slate-900/20"
+            >
               开始选购
             </router-link>
-            <router-link to="/orders" class="btn btn-secondary">
+            <router-link 
+              to="/orders" 
+              class="px-8 py-4 bg-white text-slate-700 font-bold rounded-xl border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all duration-200"
+            >
               查看订单
             </router-link>
           </template>
         </div>
       </div>
-    </div>
+    </section>
     
-    <div class="features-section">
-      <h2>为什么选择我们</h2>
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">🍞</div>
-          <h3>优质产品</h3>
-          <p>精选优质原料，严格品质把控，为您提供放心的食品</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">🚚</div>
-          <h3>快速配送</h3>
-          <p>专业物流团队，确保产品新鲜送达</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">💰</div>
-          <h3>优惠价格</h3>
-          <p>经销商专享批发价格，合作共赢</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">📱</div>
-          <h3>便捷订货</h3>
-          <p>在线下单，随时查询订单状态</p>
+    <!-- Features Section -->
+    <section class="py-16 bg-slate-50/50 border-t border-slate-100">
+      <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+          <div class="flex items-center gap-4 mb-10">
+            <div class="h-px flex-1 bg-slate-200"></div>
+            <h2 class="text-sm font-bold text-slate-400 uppercase tracking-[0.2em]">为什么选择我们</h2>
+            <div class="h-px flex-1 bg-slate-200"></div>
+          </div>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="group p-6 bg-white rounded-2xl shadow-lg shadow-slate-100/50 border border-slate-100 hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300">
+              <div class="w-14 h-14 mb-4 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-3xl">
+                🍞
+              </div>
+              <h3 class="text-lg font-bold text-slate-900 mb-2">优质产品</h3>
+              <p class="text-sm text-slate-500 leading-relaxed">精选优质原料，严格品质把控，为您提供放心的食品</p>
+            </div>
+            
+            <div class="group p-6 bg-white rounded-2xl shadow-lg shadow-slate-100/50 border border-slate-100 hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300">
+              <div class="w-14 h-14 mb-4 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-3xl">
+                🚚
+              </div>
+              <h3 class="text-lg font-bold text-slate-900 mb-2">快速配送</h3>
+              <p class="text-sm text-slate-500 leading-relaxed">专业物流团队，确保产品新鲜送达</p>
+            </div>
+            
+            <div class="group p-6 bg-white rounded-2xl shadow-lg shadow-slate-100/50 border border-slate-100 hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300">
+              <div class="w-14 h-14 mb-4 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-3xl">
+                💰
+              </div>
+              <h3 class="text-lg font-bold text-slate-900 mb-2">优惠价格</h3>
+              <p class="text-sm text-slate-500 leading-relaxed">经销商专享批发价格，合作共赢</p>
+            </div>
+            
+            <div class="group p-6 bg-white rounded-2xl shadow-lg shadow-slate-100/50 border border-slate-100 hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300">
+              <div class="w-14 h-14 mb-4 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-3xl">
+                📱
+              </div>
+              <h3 class="text-lg font-bold text-slate-900 mb-2">便捷订货</h3>
+              <p class="text-sm text-slate-500 leading-relaxed">在线下单，随时查询订单状态</p>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   </div>
 </template>
-
-<style scoped>
-.home-page {
-  margin: -2rem;
-}
-
-.hero-section {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-  padding: 4rem 2rem;
-  text-align: center;
-  color: white;
-}
-
-.hero-content {
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.hero-content h1 {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.highlight {
-  color: #fbbf24;
-}
-
-.subtitle {
-  font-size: 1.25rem;
-  opacity: 0.9;
-  margin-bottom: 1.5rem;
-}
-
-.welcome-message {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 1rem 1.5rem;
-  border-radius: 12px;
-  margin-bottom: 2rem;
-}
-
-.welcome-message p {
-  margin: 0;
-  font-size: 1.1rem;
-}
-
-.hero-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.btn {
-  padding: 0.875rem 2rem;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.btn:hover {
-  transform: translateY(-2px);
-}
-
-.btn-primary {
-  background: #fbbf24;
-  color: #1a1a2e;
-}
-
-.btn-primary:hover {
-  box-shadow: 0 10px 20px rgba(251, 191, 36, 0.3);
-}
-
-.btn-secondary {
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.25);
-}
-
-.features-section {
-  padding: 4rem 2rem;
-  background: #f8fafc;
-}
-
-.features-section h2 {
-  text-align: center;
-  font-size: 1.75rem;
-  color: #1a1a2e;
-  margin-bottom: 3rem;
-}
-
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.5rem;
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-.feature-card {
-  background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
-}
-
-.feature-card:hover {
-  transform: translateY(-4px);
-}
-
-.feature-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-}
-
-.feature-card h3 {
-  font-size: 1.125rem;
-  color: #1a1a2e;
-  margin-bottom: 0.5rem;
-}
-
-.feature-card p {
-  font-size: 0.95rem;
-  color: #64748b;
-  line-height: 1.5;
-}
-</style>

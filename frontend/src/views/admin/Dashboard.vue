@@ -15,12 +15,12 @@ const statusLabels: Record<string, string> = {
   cancelled: '已取消',
 }
 
-const statusColors: Record<string, string> = {
-  pending: '#f59e0b',
-  confirmed: '#3b82f6',
-  shipped: '#8b5cf6',
-  delivered: '#10b981',
-  cancelled: '#ef4444',
+const statusColors: Record<string, { bg: string, text: string }> = {
+  pending: { bg: 'bg-amber-100', text: 'text-amber-700' },
+  confirmed: { bg: 'bg-blue-100', text: 'text-blue-700' },
+  shipped: { bg: 'bg-purple-100', text: 'text-purple-700' },
+  delivered: { bg: 'bg-emerald-100', text: 'text-emerald-700' },
+  cancelled: { bg: 'bg-red-100', text: 'text-red-700' },
 }
 
 async function fetchStats() {
@@ -54,371 +54,166 @@ onMounted(fetchStats)
 </script>
 
 <template>
-  <div class="dashboard-page">
-    <div class="page-header">
-      <h1>管理后台</h1>
-      <p>欢迎回来，管理员</p>
-    </div>
-    
-    <div v-if="loading" class="loading">
-      加载中...
-    </div>
-    
-    <div v-else-if="error" class="error">
-      {{ error }}
-    </div>
-    
-    <template v-else-if="stats">
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon">📦</div>
-          <div class="stat-info">
-            <p class="stat-label">今日订单</p>
-            <p class="stat-value">{{ stats.today_orders }}</p>
-          </div>
-        </div>
-        
-        <div class="stat-card">
-          <div class="stat-icon">💰</div>
-          <div class="stat-info">
-            <p class="stat-label">总营收</p>
-            <p class="stat-value">{{ formatPrice(stats.total_revenue) }}</p>
-          </div>
-        </div>
-        
-        <div class="stat-card">
-          <div class="stat-icon">⏳</div>
-          <div class="stat-info">
-            <p class="stat-label">待处理订单</p>
-            <p class="stat-value">{{ stats.status_counts.pending || 0 }}</p>
-          </div>
-        </div>
-        
-        <div class="stat-card">
-          <div class="stat-icon">✅</div>
-          <div class="stat-info">
-            <p class="stat-label">已完成订单</p>
-            <p class="stat-value">{{ stats.status_counts.delivered || 0 }}</p>
-          </div>
+  <div class="py-8">
+    <div class="container mx-auto px-4 max-w-6xl">
+      <!-- Page Header -->
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-slate-900 mb-2">管理后台</h1>
+        <p class="text-slate-500">欢迎回来，管理员</p>
+      </div>
+      
+      <!-- Loading State -->
+      <div v-if="loading" class="text-center py-16">
+        <div class="inline-flex items-center gap-3 text-slate-500">
+          <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>加载中...</span>
         </div>
       </div>
       
-      <div class="content-grid">
-        <div class="section-card">
-          <h2>订单状态分布</h2>
-          <div class="status-list">
-            <div
-              v-for="(count, status) in stats.status_counts"
-              :key="status"
-              class="status-item"
-            >
-              <div class="status-bar">
-                <span
-                  class="status-badge"
-                  :style="{ backgroundColor: statusColors[status] + '20', color: statusColors[status] }"
-                >
-                  {{ statusLabels[status] || status }}
-                </span>
-                <span class="status-count">{{ count }}</span>
-              </div>
+      <!-- Error State -->
+      <div v-else-if="error" class="text-center py-16">
+        <p class="text-red-500 font-medium">{{ error }}</p>
+      </div>
+      
+      <template v-else-if="stats">
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div class="bg-white rounded-2xl shadow-lg shadow-slate-100/50 border border-slate-100 p-5 flex items-center gap-4">
+            <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-2xl">
+              📦
             </div>
-          </div>
-        </div>
-        
-        <div class="section-card">
-          <div class="section-header">
-            <h2>最近订单</h2>
-            <router-link to="/admin/orders" class="view-all">查看全部</router-link>
+            <div>
+              <p class="text-sm text-slate-400 mb-0.5">今日订单</p>
+              <p class="text-2xl font-bold text-slate-900">{{ stats.today_orders }}</p>
+            </div>
           </div>
           
-          <div class="recent-orders">
-            <div
-              v-for="order in stats.recent_orders"
-              :key="order.id"
-              class="order-item"
-            >
-              <div class="order-main">
-                <span class="order-no">{{ order.order_no }}</span>
-                <span class="order-company">{{ order.dealer_company }}</span>
-              </div>
-              <div class="order-meta">
-                <span class="order-amount">{{ formatPrice(order.total_amount) }}</span>
-                <span
-                  class="order-status"
-                  :style="{ backgroundColor: statusColors[order.status] + '20', color: statusColors[order.status] }"
-                >
-                  {{ statusLabels[order.status] }}
-                </span>
-              </div>
-              <div class="order-date">{{ formatDate(order.created_at) }}</div>
+          <div class="bg-white rounded-2xl shadow-lg shadow-slate-100/50 border border-slate-100 p-5 flex items-center gap-4">
+            <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center text-2xl">
+              💰
+            </div>
+            <div>
+              <p class="text-sm text-slate-400 mb-0.5">总营收</p>
+              <p class="text-2xl font-bold text-slate-900">{{ formatPrice(stats.total_revenue) }}</p>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-2xl shadow-lg shadow-slate-100/50 border border-slate-100 p-5 flex items-center gap-4">
+            <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-100 to-yellow-100 flex items-center justify-center text-2xl">
+              ⏳
+            </div>
+            <div>
+              <p class="text-sm text-slate-400 mb-0.5">待处理订单</p>
+              <p class="text-2xl font-bold text-slate-900">{{ stats.status_counts.pending || 0 }}</p>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-2xl shadow-lg shadow-slate-100/50 border border-slate-100 p-5 flex items-center gap-4">
+            <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-100 to-green-100 flex items-center justify-center text-2xl">
+              ✅
+            </div>
+            <div>
+              <p class="text-sm text-slate-400 mb-0.5">已完成订单</p>
+              <p class="text-2xl font-bold text-slate-900">{{ stats.status_counts.delivered || 0 }}</p>
             </div>
           </div>
         </div>
-      </div>
-      
-      <div class="quick-links">
-        <h2>快捷入口</h2>
-        <div class="links-grid">
-          <router-link to="/admin/products" class="link-card">
-            <span class="link-icon">📦</span>
-            <span class="link-text">产品管理</span>
-          </router-link>
-          <router-link to="/admin/orders" class="link-card">
-            <span class="link-icon">📋</span>
-            <span class="link-text">订单管理</span>
-          </router-link>
-          <router-link to="/admin/dealers" class="link-card">
-            <span class="link-icon">👥</span>
-            <span class="link-text">经销商管理</span>
-          </router-link>
-          <router-link to="/products" class="link-card">
-            <span class="link-icon">🛒</span>
-            <span class="link-text">产品目录</span>
-          </router-link>
+        
+        <!-- Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
+          <!-- Status Distribution -->
+          <div class="lg:col-span-2 bg-white rounded-2xl shadow-lg shadow-slate-100/50 border border-slate-100 p-6">
+            <h2 class="text-lg font-bold text-slate-900 mb-5">订单状态分布</h2>
+            <div class="space-y-3">
+              <div
+                v-for="(count, status) in stats.status_counts"
+                :key="status"
+                class="flex justify-between items-center p-3 bg-slate-50 rounded-xl"
+              >
+                <span 
+                  class="px-3 py-1 rounded-full text-xs font-semibold"
+                  :class="[statusColors[status as string]?.bg, statusColors[status as string]?.text]"
+                >
+                  {{ statusLabels[status as string] || status }}
+                </span>
+                <span class="font-bold text-slate-900">{{ count }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Recent Orders -->
+          <div class="lg:col-span-3 bg-white rounded-2xl shadow-lg shadow-slate-100/50 border border-slate-100 p-6">
+            <div class="flex justify-between items-center mb-5">
+              <h2 class="text-lg font-bold text-slate-900">最近订单</h2>
+              <router-link to="/admin/orders" class="text-sm text-amber-600 font-medium hover:text-amber-700">
+                查看全部
+              </router-link>
+            </div>
+            <div class="space-y-3">
+              <div
+                v-for="order in stats.recent_orders"
+                :key="order.id"
+                class="p-4 bg-slate-50 rounded-xl"
+              >
+                <div class="flex justify-between items-start mb-2">
+                  <div>
+                    <p class="font-semibold text-slate-900 text-sm">{{ order.order_no }}</p>
+                    <p class="text-xs text-slate-400">{{ order.dealer_company }}</p>
+                  </div>
+                  <span 
+                    class="px-2.5 py-1 rounded-full text-[10px] font-semibold"
+                    :class="[statusColors[order.status]?.bg, statusColors[order.status]?.text]"
+                  >
+                    {{ statusLabels[order.status] }}
+                  </span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-xs text-slate-400">{{ formatDate(order.created_at) }}</span>
+                  <span class="font-bold text-orange-500">{{ formatPrice(order.total_amount) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </template>
+        
+        <!-- Quick Links -->
+        <div class="bg-white rounded-2xl shadow-lg shadow-slate-100/50 border border-slate-100 p-6">
+          <h2 class="text-lg font-bold text-slate-900 mb-5">快捷入口</h2>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <router-link 
+              to="/admin/products" 
+              class="group flex flex-col items-center p-5 bg-slate-50 rounded-xl hover:bg-slate-900 transition-all duration-200"
+            >
+              <span class="text-3xl mb-2">📦</span>
+              <span class="text-sm font-medium text-slate-700 group-hover:text-white">产品管理</span>
+            </router-link>
+            <router-link 
+              to="/admin/orders" 
+              class="group flex flex-col items-center p-5 bg-slate-50 rounded-xl hover:bg-slate-900 transition-all duration-200"
+            >
+              <span class="text-3xl mb-2">📋</span>
+              <span class="text-sm font-medium text-slate-700 group-hover:text-white">订单管理</span>
+            </router-link>
+            <router-link 
+              to="/admin/dealers" 
+              class="group flex flex-col items-center p-5 bg-slate-50 rounded-xl hover:bg-slate-900 transition-all duration-200"
+            >
+              <span class="text-3xl mb-2">👥</span>
+              <span class="text-sm font-medium text-slate-700 group-hover:text-white">经销商管理</span>
+            </router-link>
+            <router-link 
+              to="/products" 
+              class="group flex flex-col items-center p-5 bg-slate-50 rounded-xl hover:bg-slate-900 transition-all duration-200"
+            >
+              <span class="text-3xl mb-2">🛒</span>
+              <span class="text-sm font-medium text-slate-700 group-hover:text-white">产品目录</span>
+            </router-link>
+          </div>
+        </div>
+      </template>
+    </div>
   </div>
 </template>
-
-<style scoped>
-.dashboard-page {
-  padding: 1rem 0;
-}
-
-.page-header {
-  margin-bottom: 2rem;
-}
-
-.page-header h1 {
-  font-size: 1.75rem;
-  color: #1a1a2e;
-  margin-bottom: 0.5rem;
-}
-
-.page-header p {
-  color: #64748b;
-}
-
-.loading, .error {
-  text-align: center;
-  padding: 3rem;
-  color: #64748b;
-}
-
-.error {
-  color: #dc2626;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.stat-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.25rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.stat-icon {
-  font-size: 2rem;
-  background: #f8fafc;
-  padding: 0.75rem;
-  border-radius: 10px;
-}
-
-.stat-label {
-  font-size: 0.875rem;
-  color: #64748b;
-  margin-bottom: 0.25rem;
-}
-
-.stat-value {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1a1a2e;
-}
-
-.content-grid {
-  display: grid;
-  grid-template-columns: 1fr 1.5fr;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-@media (max-width: 900px) {
-  .content-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.section-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.section-card h2 {
-  font-size: 1.125rem;
-  color: #1a1a2e;
-  margin-bottom: 1rem;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.section-header h2 {
-  margin-bottom: 0;
-}
-
-.view-all {
-  font-size: 0.875rem;
-  color: #0f3460;
-  text-decoration: none;
-}
-
-.view-all:hover {
-  text-decoration: underline;
-}
-
-.status-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.status-item {
-  display: flex;
-  align-items: center;
-}
-
-.status-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 0.5rem;
-  background: #f8fafc;
-  border-radius: 8px;
-}
-
-.status-badge {
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 500;
-}
-
-.status-count {
-  font-weight: 600;
-  color: #1a1a2e;
-}
-
-.recent-orders {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.order-item {
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  gap: 1rem;
-  align-items: center;
-  padding: 0.75rem;
-  background: #f8fafc;
-  border-radius: 8px;
-}
-
-.order-no {
-  font-weight: 500;
-  color: #1a1a2e;
-  font-size: 0.875rem;
-}
-
-.order-company {
-  font-size: 0.75rem;
-  color: #64748b;
-  display: block;
-}
-
-.order-amount {
-  font-weight: 600;
-  color: #dc2626;
-  font-size: 0.875rem;
-}
-
-.order-status {
-  padding: 0.25rem 0.5rem;
-  border-radius: 12px;
-  font-size: 0.7rem;
-  font-weight: 500;
-}
-
-.order-date {
-  font-size: 0.75rem;
-  color: #64748b;
-}
-
-.quick-links {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.quick-links h2 {
-  font-size: 1.125rem;
-  color: #1a1a2e;
-  margin-bottom: 1rem;
-}
-
-.links-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1rem;
-}
-
-.link-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1.25rem;
-  background: #f8fafc;
-  border-radius: 12px;
-  text-decoration: none;
-  transition: background 0.2s, transform 0.2s;
-}
-
-.link-card:hover {
-  background: #0f3460;
-  transform: translateY(-2px);
-}
-
-.link-card:hover .link-text {
-  color: white;
-}
-
-.link-icon {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-}
-
-.link-text {
-  font-size: 0.875rem;
-  color: #1a1a2e;
-  font-weight: 500;
-}
-</style>

@@ -28,12 +28,12 @@ const statusLabels: Record<string, string> = {
   cancelled: '已取消',
 }
 
-const statusColors: Record<string, string> = {
-  pending: '#f59e0b',
-  confirmed: '#3b82f6',
-  shipped: '#8b5cf6',
-  delivered: '#10b981',
-  cancelled: '#ef4444',
+const statusColors: Record<string, { bg: string, text: string }> = {
+  pending: { bg: 'bg-amber-100', text: 'text-amber-700' },
+  confirmed: { bg: 'bg-blue-100', text: 'text-blue-700' },
+  shipped: { bg: 'bg-purple-100', text: 'text-purple-700' },
+  delivered: { bg: 'bg-emerald-100', text: 'text-emerald-700' },
+  cancelled: { bg: 'bg-red-100', text: 'text-red-700' },
 }
 
 // Detail modal
@@ -124,491 +124,201 @@ onMounted(() => fetchOrders())
 </script>
 
 <template>
-  <div class="admin-orders">
-    <div class="page-header">
-      <h1>订单管理</h1>
-      <p>管理所有订单</p>
-    </div>
-    
-    <div class="toolbar">
-      <div class="search-box">
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="搜索订单号..."
-          @keyup.enter="handleFilterChange"
-        />
-        <button @click="handleFilterChange">搜索</button>
+  <div class="py-8">
+    <div class="container mx-auto px-4 max-w-6xl">
+      <!-- Page Header -->
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-slate-900 mb-2">订单管理</h1>
+        <p class="text-slate-500">管理所有订单</p>
       </div>
       
-      <select v-model="statusFilter" @change="handleFilterChange">
-        <option v-for="opt in statusOptions" :key="opt.value" :value="opt.value">
-          {{ opt.label }}
-        </option>
-      </select>
-    </div>
-    
-    <div v-if="loading" class="loading">加载中...</div>
-    <div v-else-if="error" class="error">{{ error }}</div>
-    
-    <div v-else class="orders-table">
-      <table>
-        <thead>
-          <tr>
-            <th>订单号</th>
-            <th>经销商</th>
-            <th>金额</th>
-            <th>状态</th>
-            <th>下单时间</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="order in orders" :key="order.id">
-            <td>
-              <span class="order-no" @click="viewOrder(order)">
-                {{ order.order_no }}
-              </span>
-            </td>
-            <td>{{ order.dealer_company }}</td>
-            <td class="amount">{{ formatPrice(order.total_amount) }}</td>
-            <td>
-              <span
-                class="status-badge"
-                :style="{ backgroundColor: statusColors[order.status] + '20', color: statusColors[order.status] }"
-              >
-                {{ statusLabels[order.status] }}
-              </span>
-            </td>
-            <td class="date">{{ formatDate(order.created_at) }}</td>
-            <td>
-              <div class="actions">
-                <button class="view-btn" @click="viewOrder(order)">
-                  查看
-                </button>
-                <button
-                  v-if="getNextStatus(order.status)"
-                  class="status-btn"
-                  @click="updateStatus(order.id, getNextStatus(order.status)!)"
-                >
-                  {{ getNextStatusLabel(order.status) }}
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    
-    <div v-if="totalPages > 1" class="pagination">
-      <button
-        :disabled="currentPage === 1"
-        @click="fetchOrders(currentPage - 1)"
-      >
-        上一页
-      </button>
-      <span>第 {{ currentPage }} / {{ totalPages }} 页</span>
-      <button
-        :disabled="currentPage === totalPages"
-        @click="fetchOrders(currentPage + 1)"
-      >
-        下一页
-      </button>
-    </div>
-    
-    <!-- Order Detail Modal -->
-    <div v-if="showDetail && selectedOrder" class="modal-overlay" @click.self="closeDetail">
-      <div class="modal">
-        <div class="modal-header">
-          <h2>订单详情</h2>
-          <button class="close-btn" @click="closeDetail">×</button>
+      <!-- Toolbar -->
+      <div class="flex flex-wrap gap-4 mb-6">
+        <div class="flex gap-3">
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="搜索订单号..."
+            class="px-4 py-3 border-2 border-slate-200 rounded-xl bg-white text-slate-900 placeholder-slate-400 focus:border-amber-500 focus:ring-0 transition-all duration-200 min-w-[200px]"
+            @keyup.enter="handleFilterChange"
+          />
+          <button 
+            class="px-6 py-3 bg-slate-900 text-white font-medium rounded-xl hover:bg-slate-800 transition-all duration-200"
+            @click="handleFilterChange"
+          >
+            搜索
+          </button>
         </div>
         
-        <div class="modal-body">
-          <div class="order-info">
-            <div class="info-row">
-              <span class="label">订单号</span>
-              <span class="value">{{ selectedOrder.order_no }}</span>
+        <select 
+          v-model="statusFilter" 
+          @change="handleFilterChange"
+          class="px-4 py-3 border-2 border-slate-200 rounded-xl bg-white text-slate-700 cursor-pointer focus:border-amber-500 focus:ring-0 transition-all duration-200"
+        >
+          <option v-for="opt in statusOptions" :key="opt.value" :value="opt.value">
+            {{ opt.label }}
+          </option>
+        </select>
+      </div>
+      
+      <!-- Loading / Error -->
+      <div v-if="loading" class="text-center py-16 text-slate-500">加载中...</div>
+      <div v-else-if="error" class="text-center py-16 text-red-500">{{ error }}</div>
+      
+      <!-- Orders Table -->
+      <div v-else class="bg-white rounded-2xl shadow-lg shadow-slate-100/50 border border-slate-100 overflow-hidden">
+        <table class="w-full">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-100">
+              <th class="px-6 py-4 text-left text-sm font-semibold text-slate-600">订单号</th>
+              <th class="px-6 py-4 text-left text-sm font-semibold text-slate-600">经销商</th>
+              <th class="px-6 py-4 text-left text-sm font-semibold text-slate-600">金额</th>
+              <th class="px-6 py-4 text-left text-sm font-semibold text-slate-600">状态</th>
+              <th class="px-6 py-4 text-left text-sm font-semibold text-slate-600">下单时间</th>
+              <th class="px-6 py-4 text-left text-sm font-semibold text-slate-600">操作</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr v-for="order in orders" :key="order.id" class="hover:bg-slate-50/50">
+              <td class="px-6 py-4">
+                <span 
+                  class="text-amber-600 font-medium cursor-pointer hover:underline"
+                  @click="viewOrder(order)"
+                >
+                  {{ order.order_no }}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-slate-600">{{ order.dealer_company }}</td>
+              <td class="px-6 py-4 font-bold text-orange-500">{{ formatPrice(order.total_amount) }}</td>
+              <td class="px-6 py-4">
+                <span 
+                  class="px-3 py-1 rounded-full text-xs font-semibold"
+                  :class="[statusColors[order.status]?.bg, statusColors[order.status]?.text]"
+                >
+                  {{ statusLabels[order.status] }}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-slate-400 text-sm">{{ formatDate(order.created_at) }}</td>
+              <td class="px-6 py-4">
+                <div class="flex gap-2">
+                  <button 
+                    class="px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors duration-200"
+                    @click="viewOrder(order)"
+                  >
+                    查看
+                  </button>
+                  <button
+                    v-if="getNextStatus(order.status)"
+                    class="px-3 py-1.5 text-sm font-medium text-emerald-600 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors duration-200"
+                    @click="updateStatus(order.id, getNextStatus(order.status)!)"
+                  >
+                    {{ getNextStatusLabel(order.status) }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Pagination -->
+      <div v-if="totalPages > 1" class="flex justify-center items-center gap-4 mt-8">
+        <button
+          :disabled="currentPage === 1"
+          class="px-5 py-2.5 border-2 border-slate-200 rounded-xl bg-white text-slate-600 font-medium transition-all duration-200 hover:border-amber-500 hover:text-amber-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          @click="fetchOrders(currentPage - 1)"
+        >
+          上一页
+        </button>
+        <span class="text-slate-500 text-sm">第 {{ currentPage }} / {{ totalPages }} 页</span>
+        <button
+          :disabled="currentPage === totalPages"
+          class="px-5 py-2.5 border-2 border-slate-200 rounded-xl bg-white text-slate-600 font-medium transition-all duration-200 hover:border-amber-500 hover:text-amber-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          @click="fetchOrders(currentPage + 1)"
+        >
+          下一页
+        </button>
+      </div>
+      
+      <!-- Order Detail Modal -->
+      <div v-if="showDetail && selectedOrder" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" @click.self="closeDetail">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <!-- Modal Header -->
+          <div class="flex justify-between items-center px-6 py-5 border-b border-slate-100">
+            <h2 class="text-xl font-bold text-slate-900">订单详情</h2>
+            <button class="text-slate-400 hover:text-slate-600 text-2xl" @click="closeDetail">×</button>
+          </div>
+          
+          <!-- Modal Body -->
+          <div class="p-6">
+            <!-- Order Info -->
+            <div class="space-y-3 mb-6">
+              <div class="flex py-2 border-b border-slate-100">
+                <span class="w-24 text-slate-400 text-sm">订单号</span>
+                <span class="flex-1 font-medium text-slate-900">{{ selectedOrder.order_no }}</span>
+              </div>
+              <div class="flex items-center py-2 border-b border-slate-100">
+                <span class="w-24 text-slate-400 text-sm">状态</span>
+                <span 
+                  class="px-3 py-1 rounded-full text-xs font-semibold"
+                  :class="[statusColors[selectedOrder.status]?.bg, statusColors[selectedOrder.status]?.text]"
+                >
+                  {{ statusLabels[selectedOrder.status] }}
+                </span>
+              </div>
+              <div class="flex py-2 border-b border-slate-100">
+                <span class="w-24 text-slate-400 text-sm">经销商</span>
+                <span class="flex-1 text-slate-900">{{ selectedOrder.dealer_company }}</span>
+              </div>
+              <div class="flex py-2 border-b border-slate-100">
+                <span class="w-24 text-slate-400 text-sm">配送地址</span>
+                <span class="flex-1 text-slate-900">{{ selectedOrder.shipping_address }}</span>
+              </div>
+              <div v-if="selectedOrder.notes" class="flex py-2 border-b border-slate-100">
+                <span class="w-24 text-slate-400 text-sm">备注</span>
+                <span class="flex-1 text-slate-900">{{ selectedOrder.notes }}</span>
+              </div>
+              <div class="flex py-2">
+                <span class="w-24 text-slate-400 text-sm">下单时间</span>
+                <span class="flex-1 text-slate-900">{{ formatDate(selectedOrder.created_at) }}</span>
+              </div>
             </div>
-            <div class="info-row">
-              <span class="label">状态</span>
-              <span
-                class="status-badge"
-                :style="{ backgroundColor: statusColors[selectedOrder.status] + '20', color: statusColors[selectedOrder.status] }"
+            
+            <!-- Items -->
+            <h3 class="text-lg font-bold text-slate-900 mb-4">商品明细</h3>
+            <div class="bg-slate-50 rounded-xl p-4 mb-6">
+              <div 
+                v-for="item in selectedOrder.items" 
+                :key="item.id" 
+                class="flex justify-between items-center py-3 border-b border-slate-200 last:border-0"
               >
-                {{ statusLabels[selectedOrder.status] }}
-              </span>
+                <span class="text-slate-700">{{ item.product_name }}</span>
+                <div class="flex items-center gap-4 text-sm">
+                  <span class="text-slate-400">× {{ item.quantity }}</span>
+                  <span class="text-slate-400">{{ formatPrice(item.unit_price) }}</span>
+                  <span class="font-medium text-slate-900 min-w-[80px] text-right">{{ formatPrice(item.subtotal) }}</span>
+                </div>
+              </div>
             </div>
-            <div class="info-row">
-              <span class="label">经销商</span>
-              <span class="value">{{ selectedOrder.dealer_company }}</span>
+            
+            <!-- Total -->
+            <div class="flex justify-between items-center p-4 bg-slate-900 rounded-xl text-white mb-6">
+              <span>总计</span>
+              <span class="text-xl font-bold">{{ formatPrice(selectedOrder.total_amount) }}</span>
             </div>
-            <div class="info-row">
-              <span class="label">配送地址</span>
-              <span class="value">{{ selectedOrder.shipping_address }}</span>
+            
+            <!-- Actions -->
+            <div v-if="getNextStatus(selectedOrder.status)">
+              <button
+                class="w-full py-4 bg-emerald-500 text-white font-bold rounded-xl hover:bg-emerald-600 transition-all duration-200"
+                @click="updateStatus(selectedOrder.id, getNextStatus(selectedOrder.status)!)"
+              >
+                标记为: {{ getNextStatusLabel(selectedOrder.status) }}
+              </button>
             </div>
-            <div v-if="selectedOrder.notes" class="info-row">
-              <span class="label">备注</span>
-              <span class="value">{{ selectedOrder.notes }}</span>
-            </div>
-            <div class="info-row">
-              <span class="label">下单时间</span>
-              <span class="value">{{ formatDate(selectedOrder.created_at) }}</span>
-            </div>
-          </div>
-          
-          <h3>商品明细</h3>
-          <div class="items-list">
-            <div v-for="item in selectedOrder.items" :key="item.id" class="item-row">
-              <span class="item-name">{{ item.product_name }}</span>
-              <span class="item-qty">× {{ item.quantity }}</span>
-              <span class="item-price">{{ formatPrice(item.unit_price) }}</span>
-              <span class="item-subtotal">{{ formatPrice(item.subtotal) }}</span>
-            </div>
-          </div>
-          
-          <div class="order-total">
-            <span>总计</span>
-            <span class="total-amount">{{ formatPrice(selectedOrder.total_amount) }}</span>
-          </div>
-          
-          <div v-if="getNextStatus(selectedOrder.status)" class="modal-actions">
-            <button
-              class="action-btn"
-              @click="updateStatus(selectedOrder.id, getNextStatus(selectedOrder.status)!)"
-            >
-              标记为: {{ getNextStatusLabel(selectedOrder.status) }}
-            </button>
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
-
-<style scoped>
-.admin-orders {
-  padding: 1rem 0;
-}
-
-.page-header {
-  margin-bottom: 1.5rem;
-}
-
-.page-header h1 {
-  font-size: 1.75rem;
-  color: #1a1a2e;
-  margin-bottom: 0.25rem;
-}
-
-.page-header p {
-  color: #64748b;
-}
-
-.toolbar {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.search-box {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.search-box input {
-  padding: 0.625rem 1rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  min-width: 200px;
-}
-
-.search-box input:focus {
-  outline: none;
-  border-color: #0f3460;
-}
-
-.search-box button {
-  padding: 0.625rem 1rem;
-  background: #0f3460;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.toolbar select {
-  padding: 0.625rem 1rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.loading, .error {
-  text-align: center;
-  padding: 2rem;
-}
-
-.error {
-  color: #dc2626;
-}
-
-.orders-table {
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 1rem;
-  text-align: left;
-  border-bottom: 1px solid #f3f4f6;
-}
-
-th {
-  background: #f8fafc;
-  font-weight: 600;
-  color: #374151;
-  font-size: 0.875rem;
-}
-
-.order-no {
-  color: #0f3460;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.order-no:hover {
-  text-decoration: underline;
-}
-
-.amount {
-  font-weight: 600;
-  color: #dc2626;
-}
-
-.date {
-  color: #64748b;
-  font-size: 0.875rem;
-}
-
-.status-badge {
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-
-.actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.view-btn, .status-btn {
-  padding: 0.375rem 0.75rem;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  cursor: pointer;
-}
-
-.view-btn {
-  background: #e0f2fe;
-  color: #0369a1;
-  border: none;
-}
-
-.view-btn:hover {
-  background: #bae6fd;
-}
-
-.status-btn {
-  background: #dcfce7;
-  color: #16a34a;
-  border: none;
-}
-
-.status-btn:hover {
-  background: #bbf7d0;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
-
-.pagination button {
-  padding: 0.5rem 1rem;
-  border: 2px solid #0f3460;
-  border-radius: 8px;
-  background: white;
-  color: #0f3460;
-  cursor: pointer;
-}
-
-.pagination button:hover:not(:disabled) {
-  background: #0f3460;
-  color: white;
-}
-
-.pagination button:disabled {
-  border-color: #e5e7eb;
-  color: #9ca3af;
-  cursor: not-allowed;
-}
-
-/* Modal */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.modal {
-  background: white;
-  border-radius: 12px;
-  width: 100%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.modal-header h2 {
-  font-size: 1.25rem;
-  color: #1a1a2e;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  color: #64748b;
-  cursor: pointer;
-}
-
-.modal-body {
-  padding: 1.5rem;
-}
-
-.order-info {
-  margin-bottom: 1.5rem;
-}
-
-.info-row {
-  display: flex;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #f3f4f6;
-}
-
-.info-row .label {
-  width: 100px;
-  color: #64748b;
-  font-size: 0.875rem;
-}
-
-.info-row .value {
-  flex: 1;
-  color: #1a1a2e;
-}
-
-.modal-body h3 {
-  font-size: 1rem;
-  color: #1a1a2e;
-  margin-bottom: 1rem;
-}
-
-.items-list {
-  background: #f8fafc;
-  border-radius: 8px;
-  padding: 0.5rem;
-}
-
-.item-row {
-  display: grid;
-  grid-template-columns: 1fr auto auto auto;
-  gap: 1rem;
-  padding: 0.75rem;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.item-row:last-child {
-  border-bottom: none;
-}
-
-.item-name {
-  color: #374151;
-}
-
-.item-qty {
-  color: #64748b;
-}
-
-.item-price {
-  color: #64748b;
-}
-
-.item-subtotal {
-  font-weight: 500;
-  color: #1a1a2e;
-}
-
-.order-total {
-  display: flex;
-  justify-content: space-between;
-  padding: 1rem;
-  margin-top: 1rem;
-  background: #1a1a2e;
-  border-radius: 8px;
-  color: white;
-}
-
-.total-amount {
-  font-size: 1.25rem;
-  font-weight: 700;
-}
-
-.modal-actions {
-  margin-top: 1.5rem;
-}
-
-.action-btn {
-  width: 100%;
-  padding: 0.875rem;
-  background: #10b981;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 1rem;
-}
-
-.action-btn:hover {
-  background: #059669;
-}
-</style>
-

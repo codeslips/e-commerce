@@ -43,372 +43,166 @@ const showAddToCart = computed(() => authStore.isApprovedDealer)
 </script>
 
 <template>
-  <div class="products-page">
-    <div class="page-header">
-      <h1>产品目录</h1>
-      <p>浏览我们的全部产品</p>
-    </div>
-    
-    <div class="filters-section">
-      <div class="search-box">
-        <input
-          v-model="searchInput"
-          type="text"
-          placeholder="搜索产品..."
-          @keyup.enter="handleSearch"
-        />
-        <button @click="handleSearch" class="search-btn">搜索</button>
+  <div class="py-8">
+    <div class="container mx-auto px-4 max-w-6xl">
+      <!-- Page Header -->
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-slate-900 mb-2">产品目录</h1>
+        <p class="text-slate-500">浏览我们的全部产品</p>
       </div>
       
-      <div class="category-filters">
-        <button
-          class="category-btn"
-          :class="{ active: !productStore.selectedCategory }"
-          @click="handleCategoryChange(null)"
-        >
-          全部
-        </button>
-        <button
-          v-for="cat in productStore.categories"
-          :key="cat"
-          class="category-btn"
-          :class="{ active: productStore.selectedCategory === cat }"
-          @click="handleCategoryChange(cat)"
-        >
-          {{ cat }}
-        </button>
-      </div>
-    </div>
-    
-    <div v-if="productStore.loading" class="loading">
-      加载中...
-    </div>
-    
-    <div v-else-if="productStore.error" class="error">
-      {{ productStore.error }}
-    </div>
-    
-    <div v-else-if="productStore.products.length === 0" class="empty">
-      暂无产品
-    </div>
-    
-    <div v-else class="products-grid">
-      <div
-        v-for="product in productStore.products"
-        :key="product.id"
-        class="product-card"
-      >
-        <div class="product-image">
-          <img
-            v-if="product.image_url"
-            :src="product.image_url"
-            :alt="product.name"
-          />
-          <div v-else class="no-image">
-            <span>{{ product.name.charAt(0) }}</span>
+      <!-- Search & Filters -->
+      <div class="mb-8 space-y-4">
+        <!-- Search Box -->
+        <div class="bg-white p-2 rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-100">
+          <div class="flex flex-col sm:flex-row gap-2">
+            <div class="flex-1 relative">
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <input
+                v-model="searchInput"
+                type="text"
+                placeholder="搜索产品..."
+                class="block w-full pl-11 pr-4 py-4 rounded-xl border-0 bg-slate-50 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-amber-500 transition-all duration-200"
+                @keyup.enter="handleSearch"
+              />
+            </div>
+            <button 
+              @click="handleSearch" 
+              class="px-8 py-4 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 active:scale-95 transition-all duration-200 shadow-lg shadow-slate-900/20"
+            >
+              搜索
+            </button>
           </div>
         </div>
         
-        <div class="product-info">
-          <div class="product-category">{{ product.category }}</div>
-          <h3 class="product-name">{{ product.name }}</h3>
-          <p v-if="product.description" class="product-desc">
-            {{ product.description }}
-          </p>
-          
-          <div class="product-meta">
-            <span class="price">{{ formatPrice(product.price) }}</span>
-            <span class="unit">/ {{ product.unit }}</span>
-          </div>
-          
-          <div class="product-footer">
-            <span class="min-qty">最低{{ product.min_order_quantity }}{{ product.unit }}起订</span>
-            <span class="stock" :class="{ low: product.stock < 100 }">
-              库存: {{ product.stock }}
-            </span>
-          </div>
-          
+        <!-- Category Filters -->
+        <div class="flex flex-wrap gap-2">
           <button
-            v-if="showAddToCart"
-            class="add-to-cart-btn"
-            @click="addToCart(product)"
-            :disabled="product.stock === 0"
+            class="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200"
+            :class="!productStore.selectedCategory 
+              ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20' 
+              : 'bg-white text-slate-600 border-2 border-slate-200 hover:border-amber-300 hover:text-amber-600'"
+            @click="handleCategoryChange(null)"
           >
-            {{ product.stock === 0 ? '缺货' : '加入购物车' }}
+            全部
+          </button>
+          <button
+            v-for="cat in productStore.categories"
+            :key="cat"
+            class="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200"
+            :class="productStore.selectedCategory === cat 
+              ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20' 
+              : 'bg-white text-slate-600 border-2 border-slate-200 hover:border-amber-300 hover:text-amber-600'"
+            @click="handleCategoryChange(cat)"
+          >
+            {{ cat }}
           </button>
         </div>
       </div>
-    </div>
-    
-    <div v-if="productStore.totalPages > 1" class="pagination">
-      <button
-        :disabled="productStore.currentPage === 1"
-        @click="handlePageChange(productStore.currentPage - 1)"
-      >
-        上一页
-      </button>
-      <span class="page-info">
-        第 {{ productStore.currentPage }} / {{ productStore.totalPages }} 页
-      </span>
-      <button
-        :disabled="productStore.currentPage === productStore.totalPages"
-        @click="handlePageChange(productStore.currentPage + 1)"
-      >
-        下一页
-      </button>
+      
+      <!-- Loading State -->
+      <div v-if="productStore.loading" class="text-center py-16">
+        <div class="inline-flex items-center gap-3 text-slate-500">
+          <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>加载中...</span>
+        </div>
+      </div>
+      
+      <!-- Error State -->
+      <div v-else-if="productStore.error" class="text-center py-16">
+        <p class="text-red-500 font-medium">{{ productStore.error }}</p>
+      </div>
+      
+      <!-- Empty State -->
+      <div v-else-if="productStore.products.length === 0" class="text-center py-16">
+        <div class="text-6xl mb-4">📦</div>
+        <p class="text-slate-500 font-medium">暂无产品</p>
+      </div>
+      
+      <!-- Products Grid -->
+      <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div
+          v-for="product in productStore.products"
+          :key="product.id"
+          class="bg-white rounded-2xl overflow-hidden shadow-lg shadow-slate-100/50 border border-slate-100 hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300"
+        >
+          <!-- Product Image -->
+          <div class="aspect-[4/3] overflow-hidden bg-slate-100">
+            <img
+              v-if="product.image_url"
+              :src="product.image_url"
+              :alt="product.name"
+              class="w-full h-full object-cover"
+            />
+            <div v-else class="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-400 to-orange-500">
+              <span class="text-5xl font-black text-white/80">{{ product.name.charAt(0) }}</span>
+            </div>
+          </div>
+          
+          <!-- Product Info -->
+          <div class="p-5">
+            <span class="inline-block px-2.5 py-1 mb-3 text-xs font-semibold text-amber-700 bg-amber-100 rounded-lg">
+              {{ product.category }}
+            </span>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">{{ product.name }}</h3>
+            <p v-if="product.description" class="text-sm text-slate-500 mb-4 line-clamp-2">
+              {{ product.description }}
+            </p>
+            
+            <div class="flex items-baseline gap-1 mb-3">
+              <span class="text-2xl font-bold text-orange-500">{{ formatPrice(product.price) }}</span>
+              <span class="text-sm text-slate-400">/ {{ product.unit }}</span>
+            </div>
+            
+            <div class="flex justify-between items-center text-xs text-slate-400 mb-4">
+              <span>最低{{ product.min_order_quantity }}{{ product.unit }}起订</span>
+              <span :class="product.stock < 100 ? 'text-red-500 font-medium' : ''">
+                库存: {{ product.stock }}
+              </span>
+            </div>
+            
+            <button
+              v-if="showAddToCart"
+              class="w-full py-3 rounded-xl font-semibold transition-all duration-200"
+              :class="product.stock === 0 
+                ? 'bg-slate-100 text-slate-400 cursor-not-allowed' 
+                : 'bg-slate-900 text-white hover:bg-slate-800 active:scale-[0.98] shadow-lg shadow-slate-900/20'"
+              :disabled="product.stock === 0"
+              @click="addToCart(product)"
+            >
+              {{ product.stock === 0 ? '缺货' : '加入购物车' }}
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Pagination -->
+      <div v-if="productStore.totalPages > 1" class="flex justify-center items-center gap-4 mt-10">
+        <button
+          :disabled="productStore.currentPage === 1"
+          class="px-5 py-2.5 border-2 border-slate-200 rounded-xl bg-white text-slate-600 font-medium transition-all duration-200 hover:border-amber-500 hover:text-amber-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          @click="handlePageChange(productStore.currentPage - 1)"
+        >
+          上一页
+        </button>
+        <span class="text-slate-500 text-sm">
+          第 {{ productStore.currentPage }} / {{ productStore.totalPages }} 页
+        </span>
+        <button
+          :disabled="productStore.currentPage === productStore.totalPages"
+          class="px-5 py-2.5 border-2 border-slate-200 rounded-xl bg-white text-slate-600 font-medium transition-all duration-200 hover:border-amber-500 hover:text-amber-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          @click="handlePageChange(productStore.currentPage + 1)"
+        >
+          下一页
+        </button>
+      </div>
     </div>
   </div>
 </template>
-
-<style scoped>
-.products-page {
-  padding: 1rem 0;
-}
-
-.page-header {
-  margin-bottom: 2rem;
-}
-
-.page-header h1 {
-  font-size: 1.75rem;
-  color: #1a1a2e;
-  margin-bottom: 0.5rem;
-}
-
-.page-header p {
-  color: #64748b;
-}
-
-.filters-section {
-  margin-bottom: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.search-box {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.search-box input {
-  flex: 1;
-  padding: 0.75rem 1rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 1rem;
-}
-
-.search-box input:focus {
-  outline: none;
-  border-color: #0f3460;
-}
-
-.search-btn {
-  padding: 0.75rem 1.5rem;
-  background: #0f3460;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.search-btn:hover {
-  background: #1a1a2e;
-}
-
-.category-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.category-btn {
-  padding: 0.5rem 1rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 20px;
-  background: white;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-size: 0.875rem;
-}
-
-.category-btn:hover {
-  border-color: #0f3460;
-}
-
-.category-btn.active {
-  background: #0f3460;
-  color: white;
-  border-color: #0f3460;
-}
-
-.loading, .error, .empty {
-  text-align: center;
-  padding: 3rem;
-  color: #64748b;
-}
-
-.error {
-  color: #dc2626;
-}
-
-.products-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
-}
-
-.product-card {
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.product-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.15);
-}
-
-.product-image {
-  aspect-ratio: 4/3;
-  overflow: hidden;
-  background: #f3f4f6;
-}
-
-.product-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.no-image {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.no-image span {
-  font-size: 3rem;
-  color: white;
-  font-weight: bold;
-}
-
-.product-info {
-  padding: 1.25rem;
-}
-
-.product-category {
-  font-size: 0.75rem;
-  color: #0f3460;
-  background: rgba(15, 52, 96, 0.1);
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  display: inline-block;
-  margin-bottom: 0.5rem;
-}
-
-.product-name {
-  font-size: 1.125rem;
-  color: #1a1a2e;
-  margin-bottom: 0.5rem;
-}
-
-.product-desc {
-  font-size: 0.875rem;
-  color: #64748b;
-  margin-bottom: 1rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.product-meta {
-  margin-bottom: 0.75rem;
-}
-
-.price {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #dc2626;
-}
-
-.unit {
-  font-size: 0.875rem;
-  color: #64748b;
-}
-
-.product-footer {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.75rem;
-  color: #64748b;
-  margin-bottom: 1rem;
-}
-
-.stock.low {
-  color: #dc2626;
-}
-
-.add-to-cart-btn {
-  width: 100%;
-  padding: 0.75rem;
-  background: #0f3460;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background 0.2s;
-}
-
-.add-to-cart-btn:hover:not(:disabled) {
-  background: #1a1a2e;
-}
-
-.add-to-cart-btn:disabled {
-  background: #9ca3af;
-  cursor: not-allowed;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.pagination button {
-  padding: 0.5rem 1rem;
-  border: 2px solid #0f3460;
-  border-radius: 8px;
-  background: white;
-  color: #0f3460;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.pagination button:hover:not(:disabled) {
-  background: #0f3460;
-  color: white;
-}
-
-.pagination button:disabled {
-  border-color: #e5e7eb;
-  color: #9ca3af;
-  cursor: not-allowed;
-}
-
-.page-info {
-  color: #64748b;
-  font-size: 0.875rem;
-}
-</style>

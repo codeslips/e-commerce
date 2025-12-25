@@ -61,9 +61,9 @@ function goToPage(page: number | string) {
 </script>
 
 <template>
-  <div v-if="totalPages > 1" class="pagination">
+  <div v-if="totalPages > 1" class="flex justify-center items-center gap-1.5 mt-8">
     <button
-      class="page-btn prev"
+      class="min-w-9 h-9 px-2 border-2 border-slate-200 rounded-lg bg-white text-slate-600 text-xl font-normal cursor-pointer transition-all duration-200 hover:border-amber-500 hover:text-amber-600 disabled:cursor-not-allowed disabled:opacity-50"
       :disabled="currentPage === 1"
       @click="goToPage(currentPage - 1)"
     >
@@ -73,8 +73,14 @@ function goToPage(page: number | string) {
     <button
       v-for="(page, index) in visiblePages"
       :key="index"
-      class="page-btn"
-      :class="{ active: page === currentPage, ellipsis: page === '...' }"
+      class="min-w-9 h-9 px-2 border-2 rounded-lg text-sm font-medium cursor-pointer transition-all duration-200"
+      :class="[
+        page === currentPage 
+          ? 'bg-slate-900 border-slate-900 text-white' 
+          : page === '...' 
+            ? 'border-transparent bg-transparent cursor-default' 
+            : 'border-slate-200 bg-white text-slate-600 hover:border-amber-500 hover:text-amber-600'
+      ]"
       :disabled="page === '...'"
       @click="goToPage(page)"
     >
@@ -82,7 +88,7 @@ function goToPage(page: number | string) {
     </button>
     
     <button
-      class="page-btn next"
+      class="min-w-9 h-9 px-2 border-2 border-slate-200 rounded-lg bg-white text-slate-600 text-xl font-normal cursor-pointer transition-all duration-200 hover:border-amber-500 hover:text-amber-600 disabled:cursor-not-allowed disabled:opacity-50"
       :disabled="currentPage === totalPages"
       @click="goToPage(currentPage + 1)"
     >
@@ -90,55 +96,3 @@ function goToPage(page: number | string) {
     </button>
   </div>
 </template>
-
-<style scoped>
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.375rem;
-  margin-top: 2rem;
-}
-
-.page-btn {
-  min-width: 36px;
-  height: 36px;
-  padding: 0 0.5rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  background: white;
-  color: #374151;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.page-btn:hover:not(:disabled):not(.ellipsis) {
-  border-color: #0f3460;
-  color: #0f3460;
-}
-
-.page-btn.active {
-  background: #0f3460;
-  border-color: #0f3460;
-  color: white;
-}
-
-.page-btn:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-.page-btn.ellipsis {
-  border: none;
-  background: none;
-  cursor: default;
-}
-
-.prev, .next {
-  font-size: 1.25rem;
-  font-weight: 400;
-}
-</style>
-

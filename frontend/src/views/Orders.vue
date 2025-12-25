@@ -27,12 +27,12 @@ const statusLabels: Record<string, string> = {
   cancelled: '已取消',
 }
 
-const statusColors: Record<string, string> = {
-  pending: '#f59e0b',
-  confirmed: '#3b82f6',
-  shipped: '#8b5cf6',
-  delivered: '#10b981',
-  cancelled: '#ef4444',
+const statusColors: Record<string, { bg: string, text: string }> = {
+  pending: { bg: 'bg-amber-100', text: 'text-amber-700' },
+  confirmed: { bg: 'bg-blue-100', text: 'text-blue-700' },
+  shipped: { bg: 'bg-purple-100', text: 'text-purple-700' },
+  delivered: { bg: 'bg-emerald-100', text: 'text-emerald-700' },
+  cancelled: { bg: 'bg-red-100', text: 'text-red-700' },
 }
 
 async function fetchOrders(page = 1) {
@@ -89,312 +89,135 @@ onMounted(() => fetchOrders())
 </script>
 
 <template>
-  <div class="orders-page">
-    <div class="page-header">
-      <h1>我的订单</h1>
-      <p>查看和管理您的订单</p>
-    </div>
-    
-    <div class="filters">
-      <select v-model="statusFilter" @change="handleStatusChange">
-        <option v-for="opt in statusOptions" :key="opt.value" :value="opt.value">
-          {{ opt.label }}
-        </option>
-      </select>
-    </div>
-    
-    <div v-if="loading" class="loading">
-      加载中...
-    </div>
-    
-    <div v-else-if="error" class="error">
-      {{ error }}
-    </div>
-    
-    <div v-else-if="orders.length === 0" class="empty">
-      <div class="empty-icon">📦</div>
-      <p>暂无订单</p>
-      <router-link to="/products" class="browse-btn">去选购</router-link>
-    </div>
-    
-    <div v-else class="orders-list">
-      <div v-for="order in orders" :key="order.id" class="order-card">
-        <div class="order-header">
-          <div class="order-no">
-            <span class="label">订单号</span>
-            <span class="value">{{ order.order_no }}</span>
-          </div>
-          <div
-            class="order-status"
-            :style="{ backgroundColor: statusColors[order.status] + '20', color: statusColors[order.status] }"
-          >
-            {{ statusLabels[order.status] }}
-          </div>
-        </div>
-        
-        <div class="order-items">
-          <div v-for="item in order.items" :key="item.id" class="order-item">
-            <span class="item-name">{{ item.product_name }}</span>
-            <span class="item-qty">× {{ item.quantity }}</span>
-            <span class="item-price">{{ formatPrice(item.subtotal) }}</span>
-          </div>
-        </div>
-        
-        <div class="order-footer">
-          <div class="order-info">
-            <p class="order-date">{{ formatDate(order.created_at) }}</p>
-            <p class="order-address">配送至: {{ order.shipping_address }}</p>
-          </div>
-          <div class="order-total">
-            <span class="label">合计</span>
-            <span class="amount">{{ formatPrice(order.total_amount) }}</span>
-          </div>
-        </div>
-        
-        <div v-if="order.status === 'pending'" class="order-actions">
-          <button class="cancel-btn" @click="cancelOrder(order.id)">
-            取消订单
-          </button>
+  <div class="py-8">
+    <div class="container mx-auto px-4 max-w-4xl">
+      <!-- Page Header -->
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-slate-900 mb-2">我的订单</h1>
+        <p class="text-slate-500">查看和管理您的订单</p>
+      </div>
+      
+      <!-- Filters -->
+      <div class="mb-6">
+        <select 
+          v-model="statusFilter" 
+          @change="handleStatusChange"
+          class="px-4 py-3 border-2 border-slate-200 rounded-xl bg-white text-slate-700 font-medium min-w-[150px] cursor-pointer focus:border-amber-500 focus:ring-0 transition-all duration-200"
+        >
+          <option v-for="opt in statusOptions" :key="opt.value" :value="opt.value">
+            {{ opt.label }}
+          </option>
+        </select>
+      </div>
+      
+      <!-- Loading State -->
+      <div v-if="loading" class="text-center py-16">
+        <div class="inline-flex items-center gap-3 text-slate-500">
+          <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>加载中...</span>
         </div>
       </div>
-    </div>
-    
-    <div v-if="totalPages > 1" class="pagination">
-      <button
-        :disabled="currentPage === 1"
-        @click="fetchOrders(currentPage - 1)"
-      >
-        上一页
-      </button>
-      <span class="page-info">
-        第 {{ currentPage }} / {{ totalPages }} 页
-      </span>
-      <button
-        :disabled="currentPage === totalPages"
-        @click="fetchOrders(currentPage + 1)"
-      >
-        下一页
-      </button>
+      
+      <!-- Error State -->
+      <div v-else-if="error" class="text-center py-16">
+        <p class="text-red-500 font-medium">{{ error }}</p>
+      </div>
+      
+      <!-- Empty State -->
+      <div v-else-if="orders.length === 0" class="text-center py-16 bg-white rounded-2xl shadow-lg shadow-slate-100/50 border border-slate-100">
+        <div class="text-6xl mb-4">📦</div>
+        <p class="text-slate-500 font-medium mb-6">暂无订单</p>
+        <router-link 
+          to="/products" 
+          class="inline-block px-8 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all duration-200"
+        >
+          去选购
+        </router-link>
+      </div>
+      
+      <!-- Orders List -->
+      <div v-else class="space-y-4">
+        <div 
+          v-for="order in orders" 
+          :key="order.id" 
+          class="bg-white rounded-2xl shadow-lg shadow-slate-100/50 border border-slate-100 overflow-hidden"
+        >
+          <!-- Order Header -->
+          <div class="flex justify-between items-center px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+            <div>
+              <span class="text-xs text-slate-400 font-medium">订单号</span>
+              <p class="font-semibold text-slate-900">{{ order.order_no }}</p>
+            </div>
+            <span 
+              class="px-3 py-1.5 rounded-full text-xs font-semibold"
+              :class="[statusColors[order.status]?.bg, statusColors[order.status]?.text]"
+            >
+              {{ statusLabels[order.status] }}
+            </span>
+          </div>
+          
+          <!-- Order Items -->
+          <div class="px-6 py-4 divide-y divide-slate-100">
+            <div 
+              v-for="item in order.items" 
+              :key="item.id" 
+              class="flex justify-between items-center py-3 first:pt-0 last:pb-0"
+            >
+              <span class="text-slate-700">{{ item.product_name }}</span>
+              <div class="flex items-center gap-4">
+                <span class="text-slate-400">× {{ item.quantity }}</span>
+                <span class="font-medium text-slate-900 min-w-[80px] text-right">{{ formatPrice(item.subtotal) }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Order Footer -->
+          <div class="flex justify-between items-end px-6 py-4 border-t border-slate-100 bg-slate-50/30">
+            <div>
+              <p class="text-xs text-slate-400 mb-1">{{ formatDate(order.created_at) }}</p>
+              <p class="text-sm text-slate-500">配送至: {{ order.shipping_address }}</p>
+            </div>
+            <div class="text-right">
+              <span class="text-xs text-slate-400">合计</span>
+              <p class="text-xl font-bold text-orange-500">{{ formatPrice(order.total_amount) }}</p>
+            </div>
+          </div>
+          
+          <!-- Order Actions -->
+          <div v-if="order.status === 'pending'" class="px-6 py-4 border-t border-slate-100 flex justify-end">
+            <button 
+              class="px-4 py-2 border-2 border-red-200 text-red-500 font-medium rounded-xl hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-200"
+              @click="cancelOrder(order.id)"
+            >
+              取消订单
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Pagination -->
+      <div v-if="totalPages > 1" class="flex justify-center items-center gap-4 mt-10">
+        <button
+          :disabled="currentPage === 1"
+          class="px-5 py-2.5 border-2 border-slate-200 rounded-xl bg-white text-slate-600 font-medium transition-all duration-200 hover:border-amber-500 hover:text-amber-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          @click="fetchOrders(currentPage - 1)"
+        >
+          上一页
+        </button>
+        <span class="text-slate-500 text-sm">
+          第 {{ currentPage }} / {{ totalPages }} 页
+        </span>
+        <button
+          :disabled="currentPage === totalPages"
+          class="px-5 py-2.5 border-2 border-slate-200 rounded-xl bg-white text-slate-600 font-medium transition-all duration-200 hover:border-amber-500 hover:text-amber-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          @click="fetchOrders(currentPage + 1)"
+        >
+          下一页
+        </button>
+      </div>
     </div>
   </div>
 </template>
-
-<style scoped>
-.orders-page {
-  padding: 1rem 0;
-}
-
-.page-header {
-  margin-bottom: 2rem;
-}
-
-.page-header h1 {
-  font-size: 1.75rem;
-  color: #1a1a2e;
-  margin-bottom: 0.5rem;
-}
-
-.page-header p {
-  color: #64748b;
-}
-
-.filters {
-  margin-bottom: 1.5rem;
-}
-
-.filters select {
-  padding: 0.75rem 1rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  min-width: 150px;
-  cursor: pointer;
-}
-
-.filters select:focus {
-  outline: none;
-  border-color: #0f3460;
-}
-
-.loading, .error, .empty {
-  text-align: center;
-  padding: 3rem;
-  color: #64748b;
-}
-
-.error {
-  color: #dc2626;
-}
-
-.empty-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
-}
-
-.browse-btn {
-  display: inline-block;
-  margin-top: 1rem;
-  padding: 0.75rem 2rem;
-  background: #0f3460;
-  color: white;
-  text-decoration: none;
-  border-radius: 8px;
-}
-
-.orders-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.order-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.order-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.order-no .label {
-  font-size: 0.75rem;
-  color: #64748b;
-  margin-right: 0.5rem;
-}
-
-.order-no .value {
-  font-weight: 600;
-  color: #1a1a2e;
-}
-
-.order-status {
-  padding: 0.375rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-
-.order-items {
-  margin-bottom: 1rem;
-}
-
-.order-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.5rem 0;
-  font-size: 0.95rem;
-}
-
-.item-name {
-  flex: 1;
-  color: #374151;
-}
-
-.item-qty {
-  color: #64748b;
-  margin: 0 1rem;
-}
-
-.item-price {
-  font-weight: 500;
-  color: #1a1a2e;
-}
-
-.order-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  padding-top: 1rem;
-  border-top: 1px solid #e5e7eb;
-}
-
-.order-date {
-  font-size: 0.75rem;
-  color: #64748b;
-  margin-bottom: 0.25rem;
-}
-
-.order-address {
-  font-size: 0.8rem;
-  color: #64748b;
-}
-
-.order-total {
-  text-align: right;
-}
-
-.order-total .label {
-  font-size: 0.75rem;
-  color: #64748b;
-}
-
-.order-total .amount {
-  display: block;
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #dc2626;
-}
-
-.order-actions {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #e5e7eb;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.cancel-btn {
-  padding: 0.5rem 1rem;
-  border: 1px solid #dc2626;
-  color: #dc2626;
-  background: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.875rem;
-}
-
-.cancel-btn:hover {
-  background: #dc2626;
-  color: white;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.pagination button {
-  padding: 0.5rem 1rem;
-  border: 2px solid #0f3460;
-  border-radius: 8px;
-  background: white;
-  color: #0f3460;
-  cursor: pointer;
-}
-
-.pagination button:hover:not(:disabled) {
-  background: #0f3460;
-  color: white;
-}
-
-.pagination button:disabled {
-  border-color: #e5e7eb;
-  color: #9ca3af;
-  cursor: not-allowed;
-}
-
-.page-info {
-  color: #64748b;
-  font-size: 0.875rem;
-}
-</style>

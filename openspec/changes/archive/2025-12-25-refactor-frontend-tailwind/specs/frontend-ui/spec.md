@@ -1,8 +1,5 @@
-# frontend-ui Specification
+## MODIFIED Requirements
 
-## Purpose
-TBD - created by archiving change complete-demo-implementation. Update Purpose after archive.
-## Requirements
 ### Requirement: Reference Design Matching
 
 The frontend UI SHALL use TailwindCSS for styling and match the visual design of the 欣与甜 brand reference site.
@@ -76,6 +73,8 @@ The frontend SHALL display search history with TailwindCSS styling.
   - Tailwind rounded utilities (`rounded-full` or `rounded-xl`)
   - Hover state transitions
   - A clear button visible
+
+## ADDED Requirements
 
 ### Requirement: TailwindCSS Integration
 

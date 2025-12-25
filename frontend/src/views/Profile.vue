@@ -61,288 +61,148 @@ const statusLabels: Record<string, string> = {
   suspended: '已停用',
 }
 
-const statusColors: Record<string, string> = {
-  pending: '#f59e0b',
-  approved: '#10b981',
-  suspended: '#ef4444',
+const statusColors: Record<string, { bg: string, text: string }> = {
+  pending: { bg: 'bg-amber-100', text: 'text-amber-700' },
+  approved: { bg: 'bg-emerald-100', text: 'text-emerald-700' },
+  suspended: { bg: 'bg-red-100', text: 'text-red-700' },
 }
 </script>
 
 <template>
-  <div class="profile-page">
-    <div class="page-header">
-      <h1>个人中心</h1>
-      <p>查看和管理您的账户信息</p>
-    </div>
-    
-    <div class="profile-cards">
-      <div class="profile-card account-card">
-        <h2>账户信息</h2>
-        <div class="info-row">
-          <span class="label">用户名</span>
-          <span class="value">{{ authStore.user?.username }}</span>
-        </div>
-        <div class="info-row">
-          <span class="label">邮箱</span>
-          <span class="value">{{ authStore.user?.email }}</span>
-        </div>
-        <div class="info-row">
-          <span class="label">角色</span>
-          <span class="value">{{ authStore.user?.role === 'admin' ? '管理员' : '经销商' }}</span>
-        </div>
+  <div class="py-8">
+    <div class="container mx-auto px-4 max-w-2xl">
+      <!-- Page Header -->
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-slate-900 mb-2">个人中心</h1>
+        <p class="text-slate-500">查看和管理您的账户信息</p>
       </div>
       
-      <div v-if="dealer" class="profile-card dealer-card">
-        <div class="card-header">
-          <h2>企业信息</h2>
-          <div
-            class="status-badge"
-            :style="{ backgroundColor: statusColors[dealer.status] + '20', color: statusColors[dealer.status] }"
-          >
-            {{ statusLabels[dealer.status] }}
+      <div class="space-y-6">
+        <!-- Account Info Card -->
+        <div class="bg-white rounded-2xl shadow-lg shadow-slate-100/50 border border-slate-100 p-6">
+          <h2 class="text-lg font-bold text-slate-900 mb-5">账户信息</h2>
+          
+          <div class="space-y-4">
+            <div class="flex py-3 border-b border-slate-100 last:border-0">
+              <span class="w-24 text-slate-400 text-sm">用户名</span>
+              <span class="flex-1 text-slate-900 font-medium">{{ authStore.user?.username }}</span>
+            </div>
+            <div class="flex py-3 border-b border-slate-100 last:border-0">
+              <span class="w-24 text-slate-400 text-sm">邮箱</span>
+              <span class="flex-1 text-slate-900">{{ authStore.user?.email }}</span>
+            </div>
+            <div class="flex py-3">
+              <span class="w-24 text-slate-400 text-sm">角色</span>
+              <span class="flex-1 text-slate-900">{{ authStore.user?.role === 'admin' ? '管理员' : '经销商' }}</span>
+            </div>
           </div>
         </div>
         
-        <div v-if="!editing">
-          <div class="info-row">
-            <span class="label">公司名称</span>
-            <span class="value">{{ dealer.company_name }}</span>
-          </div>
-          <div class="info-row">
-            <span class="label">联系人</span>
-            <span class="value">{{ dealer.contact_name }}</span>
-          </div>
-          <div class="info-row">
-            <span class="label">联系电话</span>
-            <span class="value">{{ dealer.phone }}</span>
-          </div>
-          <div class="info-row">
-            <span class="label">地址</span>
-            <span class="value">{{ dealer.address || '-' }}</span>
+        <!-- Dealer Info Card -->
+        <div v-if="dealer" class="bg-white rounded-2xl shadow-lg shadow-slate-100/50 border border-slate-100 p-6">
+          <div class="flex justify-between items-center mb-5">
+            <h2 class="text-lg font-bold text-slate-900">企业信息</h2>
+            <span 
+              class="px-3 py-1.5 rounded-full text-xs font-semibold"
+              :class="[statusColors[dealer.status]?.bg, statusColors[dealer.status]?.text]"
+            >
+              {{ statusLabels[dealer.status] }}
+            </span>
           </div>
           
-          <button class="edit-btn" @click="startEdit">
-            编辑信息
-          </button>
+          <!-- View Mode -->
+          <div v-if="!editing" class="space-y-4">
+            <div class="flex py-3 border-b border-slate-100">
+              <span class="w-24 text-slate-400 text-sm">公司名称</span>
+              <span class="flex-1 text-slate-900 font-medium">{{ dealer.company_name }}</span>
+            </div>
+            <div class="flex py-3 border-b border-slate-100">
+              <span class="w-24 text-slate-400 text-sm">联系人</span>
+              <span class="flex-1 text-slate-900">{{ dealer.contact_name }}</span>
+            </div>
+            <div class="flex py-3 border-b border-slate-100">
+              <span class="w-24 text-slate-400 text-sm">联系电话</span>
+              <span class="flex-1 text-slate-900">{{ dealer.phone }}</span>
+            </div>
+            <div class="flex py-3">
+              <span class="w-24 text-slate-400 text-sm">地址</span>
+              <span class="flex-1 text-slate-900">{{ dealer.address || '-' }}</span>
+            </div>
+            
+            <button 
+              class="mt-6 px-6 py-3 bg-slate-900 text-white font-semibold rounded-xl hover:bg-slate-800 transition-all duration-200"
+              @click="startEdit"
+            >
+              编辑信息
+            </button>
+          </div>
+          
+          <!-- Edit Mode -->
+          <form v-else @submit.prevent="saveProfile" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-2">公司名称</label>
+              <input 
+                v-model="formData.company_name" 
+                required
+                class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl bg-white text-slate-900 focus:border-amber-500 focus:ring-0 transition-all duration-200"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-2">联系人</label>
+              <input 
+                v-model="formData.contact_name" 
+                required
+                class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl bg-white text-slate-900 focus:border-amber-500 focus:ring-0 transition-all duration-200"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-2">联系电话</label>
+              <input 
+                v-model="formData.phone" 
+                required
+                class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl bg-white text-slate-900 focus:border-amber-500 focus:ring-0 transition-all duration-200"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-2">地址</label>
+              <textarea 
+                v-model="formData.address" 
+                rows="2"
+                class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl bg-white text-slate-900 focus:border-amber-500 focus:ring-0 transition-all duration-200 resize-none"
+              ></textarea>
+            </div>
+            
+            <!-- Error Message -->
+            <div v-if="error" class="p-4 bg-red-50 border border-red-100 text-red-600 rounded-xl text-sm font-medium">
+              {{ error }}
+            </div>
+            
+            <!-- Actions -->
+            <div class="flex gap-4 pt-2">
+              <button 
+                type="button" 
+                class="flex-1 py-3 bg-slate-100 text-slate-600 font-semibold rounded-xl hover:bg-slate-200 transition-all duration-200 disabled:opacity-60"
+                @click="cancelEdit"
+                :disabled="saving"
+              >
+                取消
+              </button>
+              <button 
+                type="submit" 
+                class="flex-1 py-3 bg-slate-900 text-white font-semibold rounded-xl hover:bg-slate-800 transition-all duration-200 disabled:opacity-60"
+                :disabled="saving"
+              >
+                {{ saving ? '保存中...' : '保存' }}
+              </button>
+            </div>
+          </form>
+          
+          <!-- Success Message -->
+          <div v-if="success" class="mt-4 p-4 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded-xl text-sm font-medium">
+            {{ success }}
+          </div>
         </div>
-        
-        <form v-else @submit.prevent="saveProfile" class="edit-form">
-          <div class="form-group">
-            <label>公司名称</label>
-            <input v-model="formData.company_name" required />
-          </div>
-          <div class="form-group">
-            <label>联系人</label>
-            <input v-model="formData.contact_name" required />
-          </div>
-          <div class="form-group">
-            <label>联系电话</label>
-            <input v-model="formData.phone" required />
-          </div>
-          <div class="form-group">
-            <label>地址</label>
-            <textarea v-model="formData.address" rows="2"></textarea>
-          </div>
-          
-          <div v-if="error" class="error-message">{{ error }}</div>
-          
-          <div class="form-actions">
-            <button type="button" class="cancel-btn" @click="cancelEdit" :disabled="saving">
-              取消
-            </button>
-            <button type="submit" class="save-btn" :disabled="saving">
-              {{ saving ? '保存中...' : '保存' }}
-            </button>
-          </div>
-        </form>
-        
-        <div v-if="success" class="success-message">{{ success }}</div>
       </div>
     </div>
   </div>
 </template>
-
-<style scoped>
-.profile-page {
-  padding: 1rem 0;
-}
-
-.page-header {
-  margin-bottom: 2rem;
-}
-
-.page-header h1 {
-  font-size: 1.75rem;
-  color: #1a1a2e;
-  margin-bottom: 0.5rem;
-}
-
-.page-header p {
-  color: #64748b;
-}
-
-.profile-cards {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  max-width: 600px;
-}
-
-.profile-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.profile-card h2 {
-  font-size: 1.125rem;
-  color: #1a1a2e;
-  margin-bottom: 1.25rem;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.25rem;
-}
-
-.card-header h2 {
-  margin-bottom: 0;
-}
-
-.status-badge {
-  padding: 0.375rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-
-.info-row {
-  display: flex;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid #f3f4f6;
-}
-
-.info-row:last-of-type {
-  border-bottom: none;
-}
-
-.info-row .label {
-  width: 100px;
-  color: #64748b;
-  font-size: 0.875rem;
-}
-
-.info-row .value {
-  flex: 1;
-  color: #1a1a2e;
-}
-
-.edit-btn {
-  margin-top: 1.5rem;
-  padding: 0.75rem 1.5rem;
-  background: #0f3460;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.edit-btn:hover {
-  background: #1a1a2e;
-}
-
-.edit-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.form-group label {
-  font-size: 0.875rem;
-  color: #374151;
-}
-
-.form-group input,
-.form-group textarea {
-  padding: 0.75rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 0.95rem;
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: #0f3460;
-}
-
-.form-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 0.5rem;
-}
-
-.cancel-btn {
-  flex: 1;
-  padding: 0.75rem;
-  background: #f3f4f6;
-  color: #374151;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.cancel-btn:hover:not(:disabled) {
-  background: #e5e7eb;
-}
-
-.save-btn {
-  flex: 1;
-  padding: 0.75rem;
-  background: #0f3460;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.save-btn:hover:not(:disabled) {
-  background: #1a1a2e;
-}
-
-.save-btn:disabled,
-.cancel-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.error-message {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #dc2626;
-  padding: 0.75rem;
-  border-radius: 8px;
-  font-size: 0.875rem;
-}
-
-.success-message {
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  color: #16a34a;
-  padding: 0.75rem;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  margin-top: 1rem;
-}
-</style>
-

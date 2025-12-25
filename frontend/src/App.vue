@@ -4,95 +4,28 @@ import NavBar from '@/components/NavBar.vue'
 </script>
 
 <template>
-  <div id="app">
+  <div id="app" class="min-h-screen flex flex-col">
     <NavBar />
-    <main class="app-main">
+    <main class="flex-1">
       <RouterView />
     </main>
-    <footer class="app-footer">
-      <p>&copy; 2024 欣与甜. All rights reserved.</p>
+    <footer class="bg-white border-t border-slate-100 py-10">
+      <div class="container mx-auto px-4">
+        <div class="flex flex-col items-center justify-center gap-4">
+          <div class="flex items-center gap-2 grayscale opacity-50">
+            <div class="w-6 h-6 rounded-lg bg-slate-900 flex items-center justify-center">
+              <span class="text-white font-bold text-[8px]">XT</span>
+            </div>
+            <span class="text-sm font-bold text-slate-900">欣与甜</span>
+          </div>
+          <p class="text-slate-400 text-sm font-medium">一路同行，共同见证梦想的力量</p>
+          <div class="text-slate-300 text-[10px] mt-2">© 2025 XIN YU TIAN. All rights reserved.</div>
+        </div>
+      </div>
     </footer>
   </div>
 </template>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background-color: #f8fafc;
-  color: #1a1a2e;
-  min-height: 100vh;
-  line-height: 1.5;
-}
-
-#app {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-.app-main {
-  flex: 1;
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.app-footer {
-  background: #1a1a2e;
-  color: rgba(255, 255, 255, 0.6);
-  padding: 1rem;
-  text-align: center;
-  font-size: 0.875rem;
-}
-
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #a1a1a1;
-}
-
-/* Input focus styling */
-input:focus,
-textarea:focus,
-select:focus {
-  outline: none;
-}
-
-/* Button reset */
-button {
-  font-family: inherit;
-}
-
-/* Link reset */
-a {
-  color: inherit;
-}
-
-@media (max-width: 768px) {
-  .app-main {
-    padding: 1rem;
-  }
-}
+/* Global styles are now in tailwind.css */
 </style>

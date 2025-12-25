@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    @apply min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-amber-100 selection:text-amber-900;
+    line-height: 1.5;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-slate-100;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 rounded;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-400;
+  }
+
+  /* Input focus styling */
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
+  }
+
+  /* Button reset */
+  button {
+    font-family: inherit;
+  }
+
+  /* Link reset */
+  a {
+    color: inherit;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-8 py-4 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 active:scale-95 transition-all duration-200 shadow-lg shadow-slate-900/20;
+  }
+
+  .btn-secondary {
+    @apply px-8 py-4 bg-white/15 text-white font-bold rounded-xl border-2 border-white/30 hover:bg-white/25 transition-all duration-200;
+  }
+
+  .btn-amber {
+    @apply px-8 py-4 bg-gradient-to-r from-amber-400 to-orange-500 text-slate-900 font-bold rounded-xl hover:from-amber-500 hover:to-orange-600 active:scale-95 transition-all duration-200 shadow-lg shadow-orange-200/50;
+  }
+
+  .input-field {
+    @apply block w-full px-4 py-4 rounded-xl border-0 bg-slate-50 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-amber-500 transition-all duration-200;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-100;
+  }
+
+  .gradient-text {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600;
+  }
+}
+
