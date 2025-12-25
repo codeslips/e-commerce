@@ -11,6 +11,43 @@ const password = ref('')
 const error = ref('')
 const loading = ref(false)
 
+interface DemoAccount {
+  username: string
+  password: string
+  role: string
+  label: string
+  description: string
+}
+
+const demoAccounts: DemoAccount[] = [
+  {
+    username: 'admin',
+    password: 'admin123',
+    role: 'admin',
+    label: '管理员',
+    description: '管理后台完整权限'
+  },
+  {
+    username: 'dealer001',
+    password: 'dealer123',
+    role: 'dealer',
+    label: '经销商(已审核)',
+    description: '广州好味道食品店'
+  },
+  {
+    username: 'dealer004',
+    password: 'dealer123',
+    role: 'dealer-pending',
+    label: '经销商(待审核)',
+    description: '东莞小食铺'
+  }
+]
+
+function selectDemoAccount(account: DemoAccount) {
+  username.value = account.username
+  password.value = account.password
+}
+
 async function handleSubmit() {
   error.value = ''
   loading.value = true
@@ -74,9 +111,29 @@ async function handleSubmit() {
         </button>
       </form>
       
-      <div class="login-footer">
-        <p>Demo账号：dealer001 / dealer123</p>
-        <p>管理员：admin / admin123</p>
+      <div class="demo-section">
+        <div class="demo-header">
+          <span class="demo-icon">✨</span>
+          <span>Demo 账号 (点击自动填充)</span>
+        </div>
+        <div class="demo-accounts">
+          <button
+            v-for="account in demoAccounts"
+            :key="account.username"
+            type="button"
+            class="demo-account-card"
+            :class="{ 'active': username === account.username }"
+            @click="selectDemoAccount(account)"
+          >
+            <div class="account-badge" :class="account.role">
+              {{ account.label }}
+            </div>
+            <div class="account-info">
+              <span class="account-username">{{ account.username }}</span>
+              <span class="account-desc">{{ account.description }}</span>
+            </div>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -97,7 +154,7 @@ async function handleSubmit() {
   border-radius: 16px;
   padding: 2.5rem;
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
@@ -186,17 +243,100 @@ async function handleSubmit() {
   cursor: not-allowed;
 }
 
-.login-footer {
+.demo-section {
   margin-top: 1.5rem;
   padding-top: 1.5rem;
   border-top: 1px solid #e5e7eb;
-  text-align: center;
 }
 
-.login-footer p {
+.demo-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.demo-icon {
+  font-size: 1rem;
+}
+
+.demo-accounts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.demo-account-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.demo-account-card:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  transform: translateX(4px);
+}
+
+.demo-account-card.active {
+  background: #eff6ff;
+  border-color: #3b82f6;
+}
+
+.account-badge {
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.account-badge.admin {
+  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+  color: white;
+}
+
+.account-badge.dealer {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.account-badge.dealer-pending {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+}
+
+.account-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.account-username {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.account-desc {
   font-size: 0.75rem;
-  color: #9ca3af;
-  margin: 0.25rem 0;
+  color: #64748b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>
-

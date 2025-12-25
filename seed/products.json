@@ -1,0 +1,183 @@
+[
+  {
+    "name": "蛋皮吐司",
+    "category": "烘焙食品",
+    "price": 29.90,
+    "unit": "袋",
+    "min_order_quantity": 10,
+    "description": "新鲜烘焙蛋皮吐司，松软可口，早餐首选",
+    "stock": 1000,
+    "is_active": true
+  },
+  {
+    "name": "肉松面包",
+    "category": "烘焙食品",
+    "price": 25.00,
+    "unit": "袋",
+    "min_order_quantity": 10,
+    "description": "精选肉松，香酥可口",
+    "stock": 800,
+    "is_active": true
+  },
+  {
+    "name": "奶香小馒头",
+    "category": "烘焙食品",
+    "price": 18.00,
+    "unit": "袋",
+    "min_order_quantity": 20,
+    "description": "浓郁奶香，入口即化",
+    "stock": 1500,
+    "is_active": true
+  },
+  {
+    "name": "葱油饼",
+    "category": "烘焙食品",
+    "price": 22.00,
+    "unit": "袋",
+    "min_order_quantity": 15,
+    "description": "传统工艺，葱香四溢",
+    "stock": 600,
+    "is_active": true
+  },
+  {
+    "name": "红豆吐司",
+    "category": "烘焙食品",
+    "price": 28.00,
+    "unit": "袋",
+    "min_order_quantity": 10,
+    "description": "精选红豆馅料，甜而不腻",
+    "stock": 900,
+    "is_active": true
+  },
+  {
+    "name": "全麦面包",
+    "category": "烘焙食品",
+    "price": 32.00,
+    "unit": "袋",
+    "min_order_quantity": 10,
+    "description": "健康全麦，低脂高纤",
+    "stock": 700,
+    "is_active": true
+  },
+  {
+    "name": "牛肉干",
+    "category": "零食",
+    "price": 58.00,
+    "unit": "袋",
+    "min_order_quantity": 5,
+    "description": "精选牛肉，风干制作，口感劲道",
+    "stock": 500,
+    "is_active": true
+  },
+  {
+    "name": "鱼豆腐",
+    "category": "零食",
+    "price": 35.00,
+    "unit": "袋",
+    "min_order_quantity": 10,
+    "description": "鲜鱼制作，Q弹美味",
+    "stock": 800,
+    "is_active": true
+  },
+  {
+    "name": "海苔卷",
+    "category": "零食",
+    "price": 28.00,
+    "unit": "袋",
+    "min_order_quantity": 10,
+    "description": "海苔酥脆，营养丰富",
+    "stock": 1200,
+    "is_active": true
+  },
+  {
+    "name": "芝麻糖",
+    "category": "零食",
+    "price": 15.00,
+    "unit": "袋",
+    "min_order_quantity": 20,
+    "description": "传统手工，芝麻浓香",
+    "stock": 2000,
+    "is_active": true
+  },
+  {
+    "name": "猪肉脯",
+    "category": "零食",
+    "price": 48.00,
+    "unit": "袋",
+    "min_order_quantity": 5,
+    "description": "香甜可口，口感细腻",
+    "stock": 600,
+    "is_active": true
+  },
+  {
+    "name": "蔓越莓饼干",
+    "category": "零食",
+    "price": 26.00,
+    "unit": "盒",
+    "min_order_quantity": 10,
+    "description": "酸甜可口，果香浓郁",
+    "stock": 1100,
+    "is_active": true
+  },
+  {
+    "name": "原味酸奶",
+    "category": "饮品",
+    "price": 12.00,
+    "unit": "瓶",
+    "min_order_quantity": 30,
+    "description": "新鲜牛奶发酵，浓郁醇厚",
+    "stock": 2000,
+    "is_active": true
+  },
+  {
+    "name": "草莓果汁",
+    "category": "饮品",
+    "price": 8.00,
+    "unit": "瓶",
+    "min_order_quantity": 30,
+    "description": "鲜榨草莓，营养美味",
+    "stock": 1500,
+    "is_active": true
+  },
+  {
+    "name": "蜂蜜柚子茶",
+    "category": "饮品",
+    "price": 15.00,
+    "unit": "瓶",
+    "min_order_quantity": 20,
+    "description": "蜂蜜与柚子完美结合，清甜解腻",
+    "stock": 1800,
+    "is_active": true
+  },
+  {
+    "name": "豆浆粉",
+    "category": "饮品",
+    "price": 38.00,
+    "unit": "袋",
+    "min_order_quantity": 10,
+    "description": "即冲即饮，浓郁豆香",
+    "stock": 1000,
+    "is_active": true
+  },
+  {
+    "name": "核桃仁",
+    "category": "坚果",
+    "price": 68.00,
+    "unit": "袋",
+    "min_order_quantity": 5,
+    "description": "精选核桃，补脑健脑",
+    "stock": 400,
+    "is_active": true
+  },
+  {
+    "name": "杏仁",
+    "category": "坚果",
+    "price": 55.00,
+    "unit": "袋",
+    "min_order_quantity": 5,
+    "description": "香脆可口，营养丰富",
+    "stock": 500,
+    "is_active": true
+  }
+]
+

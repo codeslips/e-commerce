@@ -1,0 +1,53 @@
+[
+  {
+    "username": "dealer001",
+    "email": "dealer001@example.com",
+    "password": "dealer123",
+    "company_name": "广州好味道食品店",
+    "contact_name": "张三",
+    "phone": "13800138001",
+    "address": "广州市天河区天河路123号",
+    "status": "approved"
+  },
+  {
+    "username": "dealer002",
+    "email": "dealer002@example.com",
+    "password": "dealer123",
+    "company_name": "深圳鲜食坊",
+    "contact_name": "李四",
+    "phone": "13800138002",
+    "address": "深圳市福田区福华路456号",
+    "status": "approved"
+  },
+  {
+    "username": "dealer003",
+    "email": "dealer003@example.com",
+    "password": "dealer123",
+    "company_name": "佛山美味轩",
+    "contact_name": "王五",
+    "phone": "13800138003",
+    "address": "佛山市禅城区祖庙路789号",
+    "status": "approved"
+  },
+  {
+    "username": "dealer004",
+    "email": "dealer004@example.com",
+    "password": "dealer123",
+    "company_name": "东莞小食铺",
+    "contact_name": "赵六",
+    "phone": "13800138004",
+    "address": "东莞市南城区鸿福路101号",
+    "status": "pending"
+  },
+  {
+    "username": "dealer005",
+    "email": "dealer005@example.com",
+    "password": "dealer123",
+    "company_name": "惠州食品批发",
+    "contact_name": "钱七",
+    "phone": "13800138005",
+    "address": "惠州市惠城区江北大道202号",
+    "status": "suspended"
+  }
+]
+

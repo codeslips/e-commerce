@@ -1,0 +1,127 @@
+[
+  {
+    "dealer_username": "dealer001",
+    "status": "delivered",
+    "shipping_address": "广州市天河区天河路123号",
+    "notes": "尽快发货",
+    "items": [
+      {"product_name": "蛋皮吐司", "quantity": 20},
+      {"product_name": "肉松面包", "quantity": 15},
+      {"product_name": "原味酸奶", "quantity": 50}
+    ]
+  },
+  {
+    "dealer_username": "dealer001",
+    "status": "shipped",
+    "shipping_address": "广州市天河区天河路123号",
+    "notes": "请在工作日送达",
+    "items": [
+      {"product_name": "牛肉干", "quantity": 10},
+      {"product_name": "海苔卷", "quantity": 20}
+    ]
+  },
+  {
+    "dealer_username": "dealer001",
+    "status": "pending",
+    "shipping_address": "广州市天河区天河路123号",
+    "notes": "",
+    "items": [
+      {"product_name": "核桃仁", "quantity": 8},
+      {"product_name": "杏仁", "quantity": 10},
+      {"product_name": "芝麻糖", "quantity": 30}
+    ]
+  },
+  {
+    "dealer_username": "dealer002",
+    "status": "delivered",
+    "shipping_address": "深圳市福田区福华路456号",
+    "notes": "老客户，多送几袋样品",
+    "items": [
+      {"product_name": "奶香小馒头", "quantity": 40},
+      {"product_name": "葱油饼", "quantity": 25},
+      {"product_name": "红豆吐司", "quantity": 20}
+    ]
+  },
+  {
+    "dealer_username": "dealer002",
+    "status": "confirmed",
+    "shipping_address": "深圳市福田区福华路456号",
+    "notes": "",
+    "items": [
+      {"product_name": "草莓果汁", "quantity": 60},
+      {"product_name": "蜂蜜柚子茶", "quantity": 40}
+    ]
+  },
+  {
+    "dealer_username": "dealer002",
+    "status": "pending",
+    "shipping_address": "深圳市福田区福华路456号",
+    "notes": "急单",
+    "items": [
+      {"product_name": "全麦面包", "quantity": 15},
+      {"product_name": "豆浆粉", "quantity": 20}
+    ]
+  },
+  {
+    "dealer_username": "dealer003",
+    "status": "delivered",
+    "shipping_address": "佛山市禅城区祖庙路789号",
+    "notes": "",
+    "items": [
+      {"product_name": "鱼豆腐", "quantity": 30},
+      {"product_name": "猪肉脯", "quantity": 15},
+      {"product_name": "蔓越莓饼干", "quantity": 25}
+    ]
+  },
+  {
+    "dealer_username": "dealer003",
+    "status": "shipped",
+    "shipping_address": "佛山市禅城区祖庙路789号",
+    "notes": "周末送达",
+    "items": [
+      {"product_name": "蛋皮吐司", "quantity": 30},
+      {"product_name": "肉松面包", "quantity": 25}
+    ]
+  },
+  {
+    "dealer_username": "dealer003",
+    "status": "confirmed",
+    "shipping_address": "佛山市禅城区祖庙路789号",
+    "notes": "",
+    "items": [
+      {"product_name": "原味酸奶", "quantity": 80},
+      {"product_name": "草莓果汁", "quantity": 50}
+    ]
+  },
+  {
+    "dealer_username": "dealer003",
+    "status": "cancelled",
+    "shipping_address": "佛山市禅城区祖庙路789号",
+    "notes": "客户取消",
+    "items": [
+      {"product_name": "牛肉干", "quantity": 5}
+    ]
+  },
+  {
+    "dealer_username": "dealer001",
+    "status": "delivered",
+    "shipping_address": "广州市天河区天河路123号",
+    "notes": "",
+    "items": [
+      {"product_name": "蔓越莓饼干", "quantity": 20},
+      {"product_name": "芝麻糖", "quantity": 40},
+      {"product_name": "海苔卷", "quantity": 25}
+    ]
+  },
+  {
+    "dealer_username": "dealer002",
+    "status": "delivered",
+    "shipping_address": "深圳市福田区福华路456号",
+    "notes": "",
+    "items": [
+      {"product_name": "核桃仁", "quantity": 12},
+      {"product_name": "杏仁", "quantity": 15}
+    ]
+  }
+]
+

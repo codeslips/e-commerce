@@ -119,8 +119,9 @@ async function handleSearch() {
   await fetchProducts(1)
 }
 
-function formatPrice(price: number) {
-  return `¥${price.toFixed(2)}`
+function formatPrice(price: number | string) {
+  const numPrice = typeof price === 'string' ? parseFloat(price) : price
+  return `¥${numPrice.toFixed(2)}`
 }
 
 onMounted(() => fetchProducts())

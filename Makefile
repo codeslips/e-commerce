@@ -1,4 +1,4 @@
-.PHONY: up dev stop db-init db-migrate clean logs
+.PHONY: up dev stop db-init db-migrate clean logs seed rebuild status shell shell-frontend shell-db
 
 # Docker compose command (use 'docker compose' for newer Docker versions)
 DOCKER_COMPOSE := docker compose

@@ -1,0 +1,15 @@
+[
+  {
+    "username": "admin",
+    "email": "admin@xinyutian.com",
+    "password": "admin123",
+    "role": "admin"
+  },
+  {
+    "username": "admin2",
+    "email": "admin2@xinyutian.com",
+    "password": "admin123",
+    "role": "admin"
+  }
+]
+
